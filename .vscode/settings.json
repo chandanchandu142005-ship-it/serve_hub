@@ -1,0 +1,13 @@
+{
+  "files.associations": {
+    "*.html": "html"
+  },
+  "search.exclude": {
+    "backend/node_modules": true,
+    "frontend/servehub.html": true
+  },
+  "files.watcherExclude": {
+    "backend/node_modules": true,
+    "backend/data": true
+  }
+}

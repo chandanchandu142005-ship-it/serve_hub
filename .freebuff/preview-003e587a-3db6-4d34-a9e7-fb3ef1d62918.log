@@ -1,0 +1,7 @@
+[db] Connected to MongoDB ✓ (mongodb://127.0.0.1:27017/servehub / servehub)
+[db] auxiliary seeds ensured: plans, reviews, gift cards, tickets, demo customer, addresses, notifications, wallet, referrals
+
+  Servehub API  →  http://localhost:4000
+  Health check  →  http://localhost:4000/api/health
+  Database      →  MONGO
+

@@ -1,0 +1,15 @@
+[db] Connected to MongoDB ✓ (mongodb://127.0.0.1:27017 / servehub)
+[db] auxiliary seeds ensured: plans, reviews, gift cards, tickets, demo customer, addresses, notifications, wallet, referrals
+
+  Servehub API  →  http://localhost:4000
+  Health check  →  http://localhost:4000/api/health
+  Database      →  MONGO
+
+[mail:demo] TO=demo@servehub.com · subject=Your Servehub login code is 288700 · body=6-digit code: 288700 (expires in 10 min)
+[mail:demo] TO=test2@servehub.com · subject=Your Servehub login code is 869138 · body=6-digit code: 869138 (expires in 10 min)
+(node:30684) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[sms:demo] TO=+919999888777 · Servehub: your verification code is 246016. It expires in 10 minutes. Do not share this code with anyone.
+[mail:demo] TO=demo@servehub.com · subject=Your Servehub login code is 945620 · body=6-digit code: 945620 (expires in 10 min)
+[mail:demo] TO=final-check@servehub.com · subject=Your Servehub login code is 560095 · body=6-digit code: 560095 (expires in 10 min)
+(node:30684) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.

@@ -1,0 +1,15 @@
+{
+  "name": "servehub-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Servehub SPA — vanilla JS + CSS (zero-build, bundled into servehub.html)",
+  "scripts": {
+    "dev": "serve . -l 5501",
+    "start": "serve . -l 5501",
+    "build": "node ../scripts/bundle.js",
+    "check": "node --check js/app.js && node --check js/data.js && node --check js/ui.js && node --check js/store.js && node --check js/chatbot.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "mongodb.mongodb-vscode",
+    "ritwickdey.LiveServer",
+    "esbenp.prettier-vscode",
+    "ms-vscode.js-debug"
+  ]
+}
