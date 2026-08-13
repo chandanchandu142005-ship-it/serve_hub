@@ -4,15 +4,22 @@
   "private": true,
   "description": "Servehub — premium home services marketplace. Frontend SPA + Express/MongoDB backend.",
   "scripts": {
+    "start": "cd backend && npm start & cd ../frontend && npm start",
     "install:all": "npm --prefix backend install && npm --prefix frontend install",
     "build": "node scripts/bundle.js",
-    "start:api": "npm --prefix backend start",
-    "dev:api": "npm --prefix backend run dev",
-    "dev:web": "npm --prefix frontend run dev",
+    "start:api": "cd backend && npm start",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "dev:api": "cd backend && npm run dev",
+    "dev:web": "cd frontend && npm run dev",
     "check": "npm --prefix backend run check && npm --prefix frontend run check",
     "build:apk": "node scripts/build-apk.js"
   },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
 }
