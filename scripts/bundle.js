@@ -8,7 +8,7 @@ const fe = path.join(root, 'frontend');
 let html = fs.readFileSync(path.join(fe, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(fe, 'css', 'styles.css'), 'utf8');
 const scripts = [
-  'js/data.js', 'js/store.js', 'js/ui.js',
+  'js/speed-insights.js', 'js/data.js', 'js/store.js', 'js/ui.js',
   'js/pages/public.js', 'js/pages/auth.js', 'js/pages/booking.js',
   'js/pages/customer.js', 'js/pages/professional.js', 'js/pages/admin.js', 'js/chatbot.js', 'js/app.js',
 ];

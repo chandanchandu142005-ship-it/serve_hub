@@ -9,6 +9,9 @@
     "build": "node ../scripts/bundle.js",
     "check": "node --check js/app.js && node --check js/data.js && node --check js/ui.js && node --check js/store.js && node --check js/chatbot.js"
   },
+  "dependencies": {
+    "@vercel/speed-insights": "^1.1.0"
+  },
   "devDependencies": {
     "serve": "^14.2.4"
   }
