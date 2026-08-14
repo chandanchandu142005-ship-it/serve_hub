@@ -1,0 +1,25 @@
+{
+  "name": "Servehub — Home Services, Booked in Seconds",
+  "short_name": "Servehub",
+  "description": "Book verified cleaning, repair, salon, spa and more home professionals in seconds. Live tracking, transparent pricing and secure payments.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2563EB",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["lifestyle", "productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Book a service", "short_name": "Book", "description": "Browse categories and book a professional", "url": "./servehub#/categories", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "My dashboard", "short_name": "Dashboard", "description": "Bookings, wallet, notifications", "url": "./servehub#/dashboard/overview", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Support", "short_name": "Support", "description": "Help center and support tickets", "url": "./servehub#/help", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

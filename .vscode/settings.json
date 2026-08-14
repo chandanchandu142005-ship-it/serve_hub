@@ -1,0 +1,19 @@
+{
+  "files.associations": {
+    "*.html": "html"
+  },
+  "search.exclude": {
+    "backend/node_modules": true,
+    "frontend/servehub.html": true
+  },
+  "files.watcherExclude": {
+    "backend/node_modules": true,
+    "backend/data": true
+  },
+  "mdb.presetConnections": [
+    {
+      "name": "Preset Connection",
+      "connectionString": "mongodb://localhost:27017"
+    }
+  ]
+}

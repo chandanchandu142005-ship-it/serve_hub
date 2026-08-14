@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "servehub", "destination": "/servehub.html" },
+    { "source": "servehub/**", "destination": "/servehub.html" }
+  ]
+}
