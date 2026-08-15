@@ -521,6 +521,14 @@
     let out;
     if (!r) { out = { html: `<section class="section"><div class="container"><div class="empty-state"><div class="e-ic">${icon('alert', 30)}</div><h3>Page not found</h3><p class="small muted">The page you are looking for doesn't exist.</p><a class="btn btn-primary" style="margin-top:14px" href="#/">Go home</a></div></div></section>`, wire: null, lay: 'public' }; }
     else out = r.render(parts.slice(1)) || { html: '', wire: null, lay: r.lay };
+    // If user is already logged in and opens the Login/Register page, redirect to Home or Dashboard
+    if (r && ['login', 'register'].includes(r.name) && Store.isLoggedIn()) {
+      const u = Store.currentUser();
+      const target = u?.role === 'admin' ? '#/admin/overview' : u?.role === 'pro' || u?.role === 'professional' ? '#/pro/overview' : '#/';
+      location.hash = afterLogin(target);
+      return;
+    }
+
     // Login gate: booking-related pages require an account
     if (r && ['book', 'track', 'invoice'].includes(r.name) && !Store.isLoggedIn()) {
       try { sessionStorage.setItem('sh:redirect', location.hash); } catch (e) {}
