@@ -280,7 +280,7 @@ window.Chatbot = (() => {
       typing(true);
 
       try {
-        const token = localStorage.getItem('sh_token') || (Store.state.user && Store.state.user.token);
+        const token = localStorage.getItem('sh:token') || (Store.state.user && Store.state.user.token);
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
