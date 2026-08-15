@@ -6052,6 +6052,117 @@ window.Booking = (() => {
     U.$('#bk-instant')?.addEventListener('change', e => { bk.instant = e.target.checked; saveBk(); });
     U.$('#bk-emergency')?.addEventListener('change', e => { bk.emergency = e.target.checked; saveBk(); });
     U.$$('[data-addr]', root).forEach(el => el.addEventListener('click', () => { bk.addr = el.dataset.addr; saveBk(); U.$$('[data-addr]', root).forEach(b => b.classList.toggle('on', b === el)); }));
+
+    const detectLocBtn = U.$('#bk-detect-loc', root);
+    if (detectLocBtn) {
+      detectLocBtn.addEventListener('click', async () => {
+        const status = U.$('#bk-loc-status', root);
+        detectLocBtn.disabled = true;
+        detectLocBtn.innerHTML = `${icon('timer', 16)} Detecting location…`;
+        if (status) status.innerHTML = `<span style="color:var(--primary-600)">Detecting your location…</span>`;
+
+        const fallbackIpGeo = async () => {
+          try {
+            const res = await fetch('https://ipapi.co/json/');
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.latitude && data.longitude) {
+                const newAddr = {
+                  id: 'a_gps_' + Date.now(),
+                  label: 'Exact GPS Location',
+                  line: [data.city, data.region].filter(Boolean).join(', '),
+                  area: data.city || 'Locality',
+                  city: data.city || 'City',
+                  pin: data.postal || '400050',
+                  primary: true,
+                };
+                Store.state.addr.unshift(newAddr);
+                bk.addr = newAddr.id;
+                saveBk();
+                Store.persist();
+                toast('📍 Location detected successfully!', 'success');
+                window.App && App.refresh();
+                return true;
+              }
+            }
+          } catch (e) {}
+
+          try {
+            const res = await fetch('https://ip-api.com/json/');
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.lat && data.lon) {
+                const newAddr = {
+                  id: 'a_gps_' + Date.now(),
+                  label: 'Exact GPS Location',
+                  line: [data.city, data.regionName].filter(Boolean).join(', '),
+                  area: data.city || 'Locality',
+                  city: data.city || 'City',
+                  pin: data.zip || '400050',
+                  primary: true,
+                };
+                Store.state.addr.unshift(newAddr);
+                bk.addr = newAddr.id;
+                saveBk();
+                Store.persist();
+                toast('📍 Location detected successfully!', 'success');
+                window.App && App.refresh();
+                return true;
+              }
+            }
+          } catch (e) {}
+          return false;
+        };
+
+        if (!('geolocation' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')) {
+          const ok = await fallbackIpGeo();
+          if (ok) return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          async pos => {
+            const { latitude, longitude } = pos.coords;
+            let line = 'Exact GPS Location';
+            let city = 'Mumbai';
+            let pin = '400050';
+            try {
+              const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+              if (res.ok) {
+                const data = await res.json();
+                city = data.city || data.principalSubdivision || 'Mumbai';
+                line = [data.locality, data.city].filter(Boolean).join(', ') || line;
+                pin = data.postcode || pin;
+              }
+            } catch (e) {}
+
+            const newAddr = {
+              id: 'a_gps_' + Date.now(),
+              label: 'Exact GPS Location',
+              line: `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}, ${line}`,
+              area: city,
+              city: city,
+              pin: pin,
+              primary: true,
+            };
+            Store.state.addr.unshift(newAddr);
+            bk.addr = newAddr.id;
+            saveBk();
+            Store.persist();
+            toast('📍 Exact location detected!', 'success');
+            window.App && App.refresh();
+          },
+          async err => {
+            const ok = await fallbackIpGeo();
+            if (ok) return;
+            detectLocBtn.disabled = false;
+            detectLocBtn.innerHTML = `${icon('navigation', 16)} Use current device location`;
+            if (status) status.innerHTML = `<span style="color:var(--warn-600)">Location permission denied. Please select from saved addresses below.</span>`;
+            toast('Location permission required. Select saved address below.', 'warn');
+          },
+          { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+        );
+      });
+    }
     
     // Mount Interactive Location Picker Component for Step 2
     if (bk.step === 2) {
