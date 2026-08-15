@@ -1669,6 +1669,8 @@ tbody tr:hover{background:var(--surface)}
     border-radius: 0 !important;
     z-index: 10000 !important;
   }
+}
+
 /* 5. Ultra-Compact Mobile (<= 360px) */
 @media (max-width: 360px) {
   .grid.g4, .grid.g3, .grid.g2 {
