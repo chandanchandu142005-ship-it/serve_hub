@@ -362,19 +362,56 @@
       const banner = document.getElementById('sh-loc-permission-banner');
       if (banner) banner.style.display = 'none';
 
-      if (!('geolocation' in navigator)) {
-        if (banner) {
-          banner.style.display = 'block';
-          banner.querySelector('span').textContent = 'Geolocation is not supported by your browser. Please search address or use map manually.';
-        }
-        return;
-      }
-
       this.isLocating = true;
       const icon = getIcon;
       if (gpsBtn) {
         gpsBtn.disabled = true;
-        gpsBtn.innerHTML = `${icon('timer', 15)} Detecting High-Accuracy GPS…`;
+        gpsBtn.innerHTML = `${icon('timer', 15)} Detecting Location…`;
+      }
+
+      const fallbackIpLocation = async () => {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.latitude && data.longitude) {
+              this.isLocating = false;
+              if (gpsBtn) {
+                gpsBtn.disabled = false;
+                gpsBtn.innerHTML = `${icon('navigation', 15)} Detect Exact Location`;
+              }
+              if (banner) banner.style.display = 'none';
+              this.updatePosition(data.latitude, data.longitude, true);
+              if (window.toast) toast(`📍 Location detected (${data.city || 'City'})!`, 'success');
+              return true;
+            }
+          }
+        } catch (e) {}
+
+        try {
+          const res = await fetch('https://ip-api.com/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.lat && data.lon) {
+              this.isLocating = false;
+              if (gpsBtn) {
+                gpsBtn.disabled = false;
+                gpsBtn.innerHTML = `${icon('navigation', 15)} Detect Exact Location`;
+              }
+              if (banner) banner.style.display = 'none';
+              this.updatePosition(data.lat, data.lon, true);
+              if (window.toast) toast(`📍 Location detected (${data.city || 'City'})!`, 'success');
+              return true;
+            }
+          }
+        } catch (e) {}
+
+        return false;
+      };
+
+      if (!('geolocation' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')) {
+        const ok = await fallbackIpLocation();
+        if (ok) return;
       }
 
       navigator.geolocation.getCurrentPosition(
@@ -384,11 +421,15 @@
             gpsBtn.disabled = false;
             gpsBtn.innerHTML = `${icon('navigation', 15)} Detect Exact Location`;
           }
+          if (banner) banner.style.display = 'none';
           const { latitude, longitude } = pos.coords;
           this.updatePosition(latitude, longitude, true);
-          if (window.toast) toast('📍 Exact GPS location detected!', 'success');
+          if (window.toast) toast('📍 High-accuracy GPS location detected!', 'success');
         },
-        (err) => {
+        async (err) => {
+          const ok = await fallbackIpLocation();
+          if (ok) return;
+
           this.isLocating = false;
           if (gpsBtn) {
             gpsBtn.disabled = false;
@@ -398,16 +439,16 @@
           if (banner) {
             banner.style.display = 'block';
             if (err.code === 1) {
-              banner.querySelector('span').textContent = 'Location access is disabled. Please enable location permission in your browser/device settings or select your location manually on the map.';
+              banner.querySelector('span').textContent = 'Location access disabled by browser security. Using city location. You can drag the pin on map manually.';
             } else {
-              banner.querySelector('span').textContent = 'Location detection timed out or position unavailable. Please search address or select your location manually on the map.';
+              banner.querySelector('span').textContent = 'Location detection timed out. Select your location manually on the map.';
             }
           }
           if (window.toast) toast('Location permission required. Select on map manually.', 'warn');
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
+          timeout: 6000,
           maximumAge: 0,
         }
       );
