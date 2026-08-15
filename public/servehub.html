@@ -5226,9 +5226,11 @@ window.Auth = (() => {
           });
           toast(`Welcome back, ${u.name || 'friend'}! 🎉`, 'success');
           const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
+          const dest = window.App ? window.App.afterLogin(target) : target;
           setTimeout(() => {
-            location.hash = window.App ? window.App.afterLogin(target) : target;
-          }, 120);
+            if (window.App && window.App.navigateTo) window.App.navigateTo(dest);
+            else location.hash = dest;
+          }, 80);
         } else {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -5239,7 +5241,11 @@ window.Auth = (() => {
             Store.login({ name: emailInput.split('@')[0], email: emailInput, role: role === 'admin' ? 'admin' : role === 'professional' ? 'pro' : 'customer' });
             toast(`Welcome back, ${emailInput.split('@')[0]}! 🎉`, 'success');
             const target = role === 'admin' ? '#/admin/overview' : role === 'pro' || role === 'professional' ? '#/pro/overview' : '#/';
-            setTimeout(() => { location.hash = window.App ? window.App.afterLogin(target) : target; }, 120);
+            const dest = window.App ? window.App.afterLogin(target) : target;
+            setTimeout(() => {
+              if (window.App && window.App.navigateTo) window.App.navigateTo(dest);
+              else location.hash = dest;
+            }, 80);
           } else {
             toast(errMsg, 'error');
           }
@@ -5253,7 +5259,11 @@ window.Auth = (() => {
           Store.login({ name: emailInput ? emailInput.split('@')[0] : 'User', email: emailInput || 'user@servehub.in', role });
           toast(`Welcome back! 🎉`, 'success');
           const target = role === 'admin' ? '#/admin/overview' : role === 'pro' || role === 'professional' ? '#/pro/overview' : '#/';
-          setTimeout(() => { location.hash = window.App ? window.App.afterLogin(target) : target; }, 120);
+          const dest = window.App ? window.App.afterLogin(target) : target;
+          setTimeout(() => {
+            if (window.App && window.App.navigateTo) window.App.navigateTo(dest);
+            else location.hash = dest;
+          }, 80);
         } else {
           toast('Unable to connect to backend server. Please check your network connection.', 'error');
         }
@@ -8895,22 +8905,33 @@ window.Chatbot = (() => {
       </div></div>
     </div>`;
 
+  const navigateTo = (target) => {
+    const dest = target || '#/';
+    const currentHash = location.hash || '#/';
+    location.hash = dest;
+    if (currentHash === dest || (dest === '#/' && (currentHash === '' || currentHash === '#/' || currentHash === '#'))) {
+      renderRoute();
+    }
+  };
+
   const renderRoute = () => {
     Booking.clearTimers(); Admin.clearMonitor(); clearInterval(window.__custLive);
     const hash = (location.hash || '#/').replace(/^#\/?/, '');
     const parts = hash.split('/');
     const r = routes.find(rr => { const mm = hash.match(rr.m); if (!mm) return false; route = hash; return true; });
     document.body.scrollTop = 0; window.scrollTo(0, 0);
-    let out;
-    if (!r) { out = { html: `<section class="section"><div class="container"><div class="empty-state"><div class="e-ic">${icon('alert', 30)}</div><h3>Page not found</h3><p class="small muted">The page you are looking for doesn't exist.</p><a class="btn btn-primary" style="margin-top:14px" href="#/">Go home</a></div></div></section>`, wire: null, lay: 'public' }; }
-    else out = r.render(parts.slice(1)) || { html: '', wire: null, lay: r.lay };
+
     // If user is already logged in and opens the Login/Register page, redirect to Home or Dashboard
     if (r && ['login', 'register'].includes(r.name) && Store.isLoggedIn()) {
       const u = Store.currentUser();
       const target = u?.role === 'admin' ? '#/admin/overview' : u?.role === 'pro' || u?.role === 'professional' ? '#/pro/overview' : '#/';
-      location.hash = afterLogin(target);
+      navigateTo(afterLogin(target));
       return;
     }
+
+    let out;
+    if (!r) { out = { html: `<section class="section"><div class="container"><div class="empty-state"><div class="e-ic">${icon('alert', 30)}</div><h3>Page not found</h3><p class="small muted">The page you are looking for doesn't exist.</p><a class="btn btn-primary" style="margin-top:14px" href="#/">Go home</a></div></div></section>`, wire: null, lay: 'public' }; }
+    else out = r.render(parts.slice(1)) || { html: '', wire: null, lay: r.lay };
 
     // Login gate: booking-related pages require an account
     if (r && ['book', 'track', 'invoice'].includes(r.name) && !Store.isLoggedIn()) {
@@ -9227,7 +9248,7 @@ window.Chatbot = (() => {
   /* ---------------- init ---------------- */
   document.documentElement.dataset.theme = Store.state.theme;
   window.addEventListener('hashchange', renderRoute);
-  window.App = { refresh: renderRoute, afterLogin, openLangModal: openLanguageModal, openLanguageModal };
+  window.App = { refresh: renderRoute, afterLogin, navigateTo, openLangModal: openLanguageModal, openLanguageModal };
   window.SH_PWA && SH_PWA.init();
   renderRoute();
 })();

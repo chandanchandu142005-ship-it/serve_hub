@@ -700,9 +700,11 @@ window.Auth = (() => {
           });
           toast(`Welcome back, ${u.name || 'friend'}! 🎉`, 'success');
           const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
+          const dest = window.App ? window.App.afterLogin(target) : target;
           setTimeout(() => {
-            location.hash = window.App ? window.App.afterLogin(target) : target;
-          }, 120);
+            if (window.App && window.App.navigateTo) window.App.navigateTo(dest);
+            else location.hash = dest;
+          }, 80);
         } else {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -713,7 +715,11 @@ window.Auth = (() => {
             Store.login({ name: emailInput.split('@')[0], email: emailInput, role: role === 'admin' ? 'admin' : role === 'professional' ? 'pro' : 'customer' });
             toast(`Welcome back, ${emailInput.split('@')[0]}! 🎉`, 'success');
             const target = role === 'admin' ? '#/admin/overview' : role === 'pro' || role === 'professional' ? '#/pro/overview' : '#/';
-            setTimeout(() => { location.hash = window.App ? window.App.afterLogin(target) : target; }, 120);
+            const dest = window.App ? window.App.afterLogin(target) : target;
+            setTimeout(() => {
+              if (window.App && window.App.navigateTo) window.App.navigateTo(dest);
+              else location.hash = dest;
+            }, 80);
           } else {
             toast(errMsg, 'error');
           }
@@ -727,7 +733,11 @@ window.Auth = (() => {
           Store.login({ name: emailInput ? emailInput.split('@')[0] : 'User', email: emailInput || 'user@servehub.in', role });
           toast(`Welcome back! 🎉`, 'success');
           const target = role === 'admin' ? '#/admin/overview' : role === 'pro' || role === 'professional' ? '#/pro/overview' : '#/';
-          setTimeout(() => { location.hash = window.App ? window.App.afterLogin(target) : target; }, 120);
+          const dest = window.App ? window.App.afterLogin(target) : target;
+          setTimeout(() => {
+            if (window.App && window.App.navigateTo) window.App.navigateTo(dest);
+            else location.hash = dest;
+          }, 80);
         } else {
           toast('Unable to connect to backend server. Please check your network connection.', 'error');
         }

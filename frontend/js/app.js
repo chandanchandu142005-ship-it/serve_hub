@@ -512,22 +512,33 @@
       </div></div>
     </div>`;
 
+  const navigateTo = (target) => {
+    const dest = target || '#/';
+    const currentHash = location.hash || '#/';
+    location.hash = dest;
+    if (currentHash === dest || (dest === '#/' && (currentHash === '' || currentHash === '#/' || currentHash === '#'))) {
+      renderRoute();
+    }
+  };
+
   const renderRoute = () => {
     Booking.clearTimers(); Admin.clearMonitor(); clearInterval(window.__custLive);
     const hash = (location.hash || '#/').replace(/^#\/?/, '');
     const parts = hash.split('/');
     const r = routes.find(rr => { const mm = hash.match(rr.m); if (!mm) return false; route = hash; return true; });
     document.body.scrollTop = 0; window.scrollTo(0, 0);
-    let out;
-    if (!r) { out = { html: `<section class="section"><div class="container"><div class="empty-state"><div class="e-ic">${icon('alert', 30)}</div><h3>Page not found</h3><p class="small muted">The page you are looking for doesn't exist.</p><a class="btn btn-primary" style="margin-top:14px" href="#/">Go home</a></div></div></section>`, wire: null, lay: 'public' }; }
-    else out = r.render(parts.slice(1)) || { html: '', wire: null, lay: r.lay };
+
     // If user is already logged in and opens the Login/Register page, redirect to Home or Dashboard
     if (r && ['login', 'register'].includes(r.name) && Store.isLoggedIn()) {
       const u = Store.currentUser();
       const target = u?.role === 'admin' ? '#/admin/overview' : u?.role === 'pro' || u?.role === 'professional' ? '#/pro/overview' : '#/';
-      location.hash = afterLogin(target);
+      navigateTo(afterLogin(target));
       return;
     }
+
+    let out;
+    if (!r) { out = { html: `<section class="section"><div class="container"><div class="empty-state"><div class="e-ic">${icon('alert', 30)}</div><h3>Page not found</h3><p class="small muted">The page you are looking for doesn't exist.</p><a class="btn btn-primary" style="margin-top:14px" href="#/">Go home</a></div></div></section>`, wire: null, lay: 'public' }; }
+    else out = r.render(parts.slice(1)) || { html: '', wire: null, lay: r.lay };
 
     // Login gate: booking-related pages require an account
     if (r && ['book', 'track', 'invoice'].includes(r.name) && !Store.isLoggedIn()) {
@@ -844,7 +855,7 @@
   /* ---------------- init ---------------- */
   document.documentElement.dataset.theme = Store.state.theme;
   window.addEventListener('hashchange', renderRoute);
-  window.App = { refresh: renderRoute, afterLogin, openLangModal: openLanguageModal, openLanguageModal };
+  window.App = { refresh: renderRoute, afterLogin, navigateTo, openLangModal: openLanguageModal, openLanguageModal };
   window.SH_PWA && SH_PWA.init();
   renderRoute();
 })();
