@@ -7,7 +7,7 @@
 const mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 
-const MONGODB_URI = (process.env.MONGODB_URI || process.env.MONGO_URI || '').trim() || 'mongodb://localhost:27017';
+const getMongoUri = () => (process.env.MONGODB_URI || process.env.MONGO_URI || '').trim() || 'mongodb://localhost:27017';
 const DB_NAME = (process.env.MONGODB_DB || '').trim() || 'servehub';
 
 let client = null;
@@ -16,14 +16,28 @@ let mode = 'pending'; // 'pending' | 'mongo' | 'file'
 const currentMode = () => mode;
 
 async function tryConnect(uri) {
-  const c = new MongoClient(uri, { serverSelectionTimeoutMS: 3000 });
-  await c.connect();
-  const db = c.db(DB_NAME);
-  await db.command({ ping: 1 });
-  return c;
+  const opts = { serverSelectionTimeoutMS: 4000 };
+  try {
+    const c = new MongoClient(uri, opts);
+    await c.connect();
+    const db = c.db(DB_NAME);
+    await db.command({ ping: 1 });
+    return c;
+  } catch (err) {
+    if (uri.startsWith('mongodb+srv://') || uri.includes('ssl=true') || uri.includes('tls=true')) {
+      const altOpts = { serverSelectionTimeoutMS: 4000, tlsAllowInvalidCertificates: true };
+      const cAlt = new MongoClient(uri, altOpts);
+      await cAlt.connect();
+      const dbAlt = cAlt.db(DB_NAME);
+      await dbAlt.command({ ping: 1 });
+      return cAlt;
+    }
+    throw err;
+  }
 }
 
 async function initDb() {
+  const MONGODB_URI = getMongoUri();
   const isVercel = Boolean(process.env.VERCEL);
   const isLocalHostUri = MONGODB_URI.includes('localhost') || MONGODB_URI.includes('127.0.0.1');
 
@@ -58,7 +72,8 @@ async function initDb() {
       activeUri = uri;
       connected = true;
       break;
-    } catch (_) {
+    } catch (err) {
+      console.warn(`[db] Connection attempt failed (${uri}):`, err.message);
       if (client) { client.close().catch(() => {}); client = null; }
     }
   }
@@ -67,7 +82,7 @@ async function initDb() {
     try {
       await mongoose.connect(activeUri, {
         dbName: DB_NAME,
-        serverSelectionTimeoutMS: 3000,
+        serverSelectionTimeoutMS: 5000,
         autoIndex: true,
       });
       mode = 'mongo';
@@ -80,8 +95,8 @@ async function initDb() {
 
   mode = 'file';
   if (client) { client.close().catch(() => {}); client = null; }
-  console.warn('[db] MongoDB unreachable on localhost:27017 — using JSON file store (backend/data/store.json).');
-  console.warn('[db] To connect live MongoDB, start mongod on port 27017 or set MONGODB_URI in backend/.env');
+  console.warn(`[db] MongoDB unreachable (${MONGODB_URI}) — using JSON file store (backend/data/store.json).`);
+  console.warn('[db] To connect live MongoDB, start mongod on port 27017 or set valid MONGODB_URI in backend/.env');
 }
 
-module.exports = { initDb, mode: currentMode, MONGODB_URI, DB_NAME };
+module.exports = { initDb, mode: currentMode, get MONGODB_URI() { return getMongoUri(); }, DB_NAME };

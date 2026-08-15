@@ -2,8 +2,10 @@
    Servehub API — Express + PostgreSQL (JSON file fallback in demo).
    Run: npm install && npm start   (copy .env.example → .env first)
    ------------------------------------------------------------------ */
-require('dotenv').config();
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv').config({ path: path.join(__dirname, '..', '.env.local') });
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
