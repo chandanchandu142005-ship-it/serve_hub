@@ -24,6 +24,15 @@ async function tryConnect(uri) {
 }
 
 async function initDb() {
+  const isVercel = Boolean(process.env.VERCEL);
+  const isLocalHostUri = MONGODB_URI.includes('localhost') || MONGODB_URI.includes('127.0.0.1');
+
+  if (isVercel && (!process.env.MONGODB_URI || isLocalHostUri)) {
+    mode = 'file';
+    console.log('[db] Running on Vercel without remote MONGODB_URI — using fast file store fallback.');
+    return;
+  }
+
   if (MONGODB_URI.includes('<db_password>') || MONGODB_URI.includes('<password>') || MONGODB_URI.includes('your_password')) {
     mode = 'file';
     console.warn('\n======================================================');

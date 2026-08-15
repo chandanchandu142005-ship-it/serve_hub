@@ -7,6 +7,8 @@ const SEED = require('../db/seed-data');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 const DATA_FILE = path.join(DATA_DIR, 'store.json');
+const TMP_DATA_DIR = path.join('/tmp', 'servehub-data');
+const TMP_DATA_FILE = path.join(TMP_DATA_DIR, 'store.json');
 
 let db = null;
 let timer = null;
@@ -16,6 +18,8 @@ function load() {
   let existing = null;
   if (fs.existsSync(DATA_FILE)) {
     try { existing = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); } catch { /* corrupt → recreate */ }
+  } else if (fs.existsSync(TMP_DATA_FILE)) {
+    try { existing = JSON.parse(fs.readFileSync(TMP_DATA_FILE, 'utf8')); } catch { /* corrupt → recreate */ }
   }
   if (existing) {
     // Migrate older store files: fill any collections added in later versions.
@@ -70,8 +74,21 @@ function load() {
 function save() {
   clearTimeout(timer);
   timer = setTimeout(() => {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify(db, null, 2));
+    try {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+      fs.writeFileSync(DATA_FILE, JSON.stringify(db, null, 2));
+    } catch (err) {
+      if (err.code === 'EROFS' || err.code === 'EACCES' || err.code === 'EPERM') {
+        try {
+          fs.mkdirSync(TMP_DATA_DIR, { recursive: true });
+          fs.writeFileSync(TMP_DATA_FILE, JSON.stringify(db, null, 2));
+        } catch (tmpErr) {
+          console.warn('[fileStore] Failed to write to /tmp store:', tmpErr.message);
+        }
+      } else {
+        console.warn('[fileStore] Failed to save store:', err.message);
+      }
+    }
   }, 60);
 }
 
