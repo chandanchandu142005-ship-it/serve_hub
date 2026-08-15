@@ -78,22 +78,40 @@ window.Store = (() => {
     points: load('points', 120),
     favs: load('favs', []),        // professional ids
     wish: load('wish', []),        // service ids
-    addr: load('addr', [
-      { id: 'a1', label: 'Home', line: 'B-402, Sunrise Residency, Linking Road', city: 'Mumbai', area: 'Bandra', pin: '400050', primary: true },
-      { id: 'a2', label: 'Office', line: '15th Floor, One Hub Tower, BKC', city: 'Mumbai', area: 'BKC', pin: '400051', primary: false },
-    ]),
+    addr: (() => {
+      let saved = load('addr', [
+        { id: 'a1', label: 'Home', line: 'B-402, Sunrise Residency, Linking Road', city: 'Mumbai', area: 'Bandra', pin: '400050', primary: true },
+        { id: 'a2', label: 'Office', line: '15th Floor, One Hub Tower, BKC', city: 'Mumbai', area: 'BKC', pin: '400051', primary: false },
+      ]);
+      if (Array.isArray(saved)) {
+        saved = saved.filter(a => !a.id.startsWith('a_gps_'));
+      }
+      if (!saved || saved.length === 0) {
+        saved = [
+          { id: 'a1', label: 'Home', line: 'B-402, Sunrise Residency, Linking Road', city: 'Mumbai', area: 'Bandra', pin: '400050', primary: true },
+          { id: 'a2', label: 'Office', line: '15th Floor, One Hub Tower, BKC', city: 'Mumbai', area: 'BKC', pin: '400051', primary: false },
+        ];
+      }
+      return saved;
+    })(),
     notifs: load('notifs', []),
     tickets: load('tickets', []),
     chats: load('chats', {}),
     plan: load('plan', 'free'),
-    // Selected city/area (displayed as "📍 Bengaluru, Karnataka"). Migrates
-    // the legacy sh:city key; never stores exact coordinates.
     location: load('location', (() => { try { const c = localStorage.getItem('sh:city'); return c ? { city: c, area: '' } : { city: 'Mumbai', area: '' }; } catch (e) { return { city: 'Mumbai', area: '' }; } })()),
     giftcards: load('giftcards', []),
     withdrawals: load('withdrawals', []),
     proApps: load('proApps', []),
     coupons: load('coupons', []),   // unlocked coupon codes
     settings: load('settings', { push: true, email: true, sms: false, whatsapp: true, saveCards: true }),
+  };
+
+  const removeAddress = (id) => {
+    state.addr = state.addr.filter(a => a.id !== id);
+    if (state.addr.length > 0 && !state.addr.some(a => a.primary)) {
+      state.addr[0].primary = true;
+    }
+    persist();
   };
 
   const persist = () => { Object.keys(state).forEach(k => save(k, state[k])); };
@@ -207,5 +225,5 @@ window.Store = (() => {
   const getSelectedPhoto = () => selectedPhoto;
   const clearSelectedPhoto = () => { selectedPhoto = null; };
 
-  return { state, persist, STATUSES, currentUser, isLoggedIn, login, logout, addBooking, bookingById, advanceBooking, rateBooking, statusIndex, statusMeta, toggleFav, toggleWish, isFav, isWish, walletTx, addPoints, applyCoupon, sendMsg, getChat, createTicket, markAllRead, unreadCount, addNotif, demoPro, setLocation, currentLocation, setSelectedPhoto, getSelectedPhoto, clearSelectedPhoto };
+  return { state, persist, STATUSES, currentUser, isLoggedIn, login, logout, removeAddress, addBooking, bookingById, advanceBooking, rateBooking, statusIndex, statusMeta, toggleFav, toggleWish, isFav, isWish, walletTx, addPoints, applyCoupon, sendMsg, getChat, createTicket, markAllRead, unreadCount, addNotif, demoPro, setLocation, currentLocation, setSelectedPhoto, getSelectedPhoto, clearSelectedPhoto };
 })();

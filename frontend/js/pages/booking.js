@@ -57,15 +57,17 @@ window.Booking = (() => {
          <label class="pack-row" style="cursor:pointer"><input type="checkbox" id="bk-emergency" ${bk.emergency ? 'checked' : ''} style="display:none"><span>${icon('rocket', 16)} <span><b>Emergency +₹99</b><br><span class="pk-desc">Priority dispatch, ~60 min</span></span></span></label>
        </div>`,
       /* 2 address */
-      `<div style="margin-bottom:20px"><h3 style="font-size:18px">Where should we come?</h3><p class="small muted">We use your address for booking & live tracking.</p></div>
-       <div style="margin-bottom:16px;background:var(--surface-2);padding:14px;border-radius:14px;border:1px dashed var(--line)">
-         <button type="button" class="btn btn-soft btn-block" id="bk-detect-loc" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;font-weight:600">
-           ${icon('navigation', 16)} Use current device location
-         </button>
-         <div id="bk-loc-status" class="small center" style="margin-top:6px"></div>
+      `<div style="margin-bottom:20px"><h3 style="font-size:18px">Where should we come?</h3><p class="small muted">Select a service address below or add a new one.</p></div>
+       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+         ${Store.state.addr.map(a => `<div class="pack-row ${bk.addr === a.id ? 'on' : ''}" data-addr="${a.id}" tabindex="0">
+           <div style="flex:1"><div class="pk-name">${icon('pin', 14)} ${esc(a.label)} ${a.primary ? '<span class="badge badge-primary">Default</span>' : ''}</div><div class="pk-desc">${esc(a.line)}, ${esc(a.area)}, ${esc(a.city)} — ${a.pin}</div></div>
+           <div style="display:flex;align-items:center;gap:8px">
+             <span class="verified">${icon('badgeCheck', 11)} Verified</span>
+             ${Store.state.addr.length > 1 ? `<button type="button" class="icon-btn btn-sm" data-del-addr="${a.id}" title="Remove address" aria-label="Remove address" style="color:var(--danger);padding:4px">${icon('trash', 15)}</button>` : ''}
+           </div>
+         </div>`).join('')}
        </div>
-       ${Store.state.addr.map(a => `<div class="pack-row ${bk.addr === a.id ? 'on' : ''}" data-addr="${a.id}" tabindex="0"><div><div class="pk-name">${icon('pin', 14)} ${esc(a.label)} ${a.primary ? '<span class="badge badge-primary">Default</span>' : ''}</div><div class="pk-desc">${esc(a.line)}, ${esc(a.area)}, ${esc(a.city)} — ${a.pin}</div></div><span class="verified">${icon('badgeCheck', 11)} Verified</span></div>`).join('')}
-       <button class="btn btn-outline btn-block" data-act="add-addr">${icon('plus', 15)} Add new address</button>`,
+       <button type="button" class="btn btn-outline btn-block" data-act="add-addr">${icon('plus', 15)} Add new address</button>`,
       /* 3 professional */
       `<div style="margin-bottom:20px"><h3 style="font-size:18px">Choose your professional</h3><p class="small muted">All experts are verified, rated and background-checked.</p></div>
        <label class="pack-row ${bk.autoPro ? 'on' : ''}" data-pro="auto" tabindex="0" style="background:var(--grad-soft);border-color:var(--primary-100)"><div><div class="pk-name">${icon('sparkles', 15)} Auto-assign best professional</div><div class="pk-desc">We pick the highest-rated available expert near you</div></div><span class="verified">${icon('badgeCheck', 11)} Recommended</span></label>
@@ -313,6 +315,18 @@ window.Booking = (() => {
     U.$('#bk-instant')?.addEventListener('change', e => { bk.instant = e.target.checked; saveBk(); });
     U.$('#bk-emergency')?.addEventListener('change', e => { bk.emergency = e.target.checked; saveBk(); });
     U.$$('[data-addr]', root).forEach(el => el.addEventListener('click', () => { bk.addr = el.dataset.addr; saveBk(); U.$$('[data-addr]', root).forEach(b => b.classList.toggle('on', b === el)); }));
+
+    U.$$('[data-del-addr]', root).forEach(el => el.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = el.dataset.delAddr;
+      if (id && window.Store) {
+        Store.removeAddress(id);
+        if (bk.addr === id) bk.addr = Store.state.addr[0]?.id || '';
+        saveBk();
+        toast('Address removed 🗑️', 'info');
+        if (window.App) App.refresh();
+      }
+    }));
 
     const detectLocBtn = U.$('#bk-detect-loc', root);
     if (detectLocBtn) {
