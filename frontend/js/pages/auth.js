@@ -187,6 +187,15 @@ window.Auth = (() => {
 
         <div class="sh-auth-form-panel">
           <div class="sh-auth-header-row">
+            <a class="sh-auth-mobile-brand" href="#/">
+              <div class="sh-auth-brand-icon" style="width:36px;height:36px;border-radius:10px">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <div class="sh-auth-brand-text">Service<span style="color:#2563EB">Hub</span></div>
+            </a>
             <button type="button" class="sh-lang-dropdown-btn" data-act="lang-toggle">
               ${icon('globe', 16)} English <span style="font-size:10px;margin-left:2px">▼</span>
             </button>
