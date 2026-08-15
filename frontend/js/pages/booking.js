@@ -194,6 +194,7 @@ window.Booking = (() => {
           const P = packsOf(s)[bk.pack];
           const addr = Store.state.addr.find(a => a.id === bk.addr) || {};
           const locDet = bk.locationDetails || {};
+          const photo = Store.getSelectedPhoto();
           const b = Store.addBooking({
             serviceId: s.id, serviceName: s.name, cat: s.cat, pack: P.name, packPrice: P.price, dur: P.dur,
             date: bk.date || Date.now(), time: bk.time, instant: bk.instant, emergency: bk.emergency,
@@ -207,9 +208,10 @@ window.Booking = (() => {
             country: locDet.country || addr.country || '',
             proId: pro.id, proName: pro.name, proRating: pro.rating,
             sub: P.price, disc: bk.disc, gst: Math.round(P.price * 0.18), total: total(), payMethod: bk.payMethod,
-            coupon: bk.coupon, notes: bk.notes || '',
+            coupon: bk.coupon, notes: bk.notes || '', problemPhoto: photo || null,
             walletUsed: bk.payMethod === 'wallet' ? Math.min(Store.state.wallet, total()) : 0,
           });
+          Store.clearSelectedPhoto();
           if (bk.payMethod === 'wallet') { const used = Math.min(Store.state.wallet, total()); Store.walletTx(-used, 'booking ' + b.id); }
           Store.sendMsg(b.id, `Hi! This is ${pro.name} from Servehub. Your ${s.name} booking for ${fmtDate(b.date)} at ${b.time} is confirmed. See you soon! 👋`, 'them');
           Store.addNotif('calendar', 'Booking confirmed', `Booking ${b.id} for ${s.name} on ${fmtDate(b.date)} at ${b.time} is confirmed. Track it live!`);

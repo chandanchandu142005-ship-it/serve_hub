@@ -13,7 +13,10 @@
     "dev:api": "cd backend && npm run dev",
     "dev:web": "cd frontend && npm run dev",
     "check": "npm --prefix backend run check && npm --prefix frontend run check",
-    "build:apk": "node scripts/build-apk.js"
+    "build:apk": "node scripts/build-apk.js",
+    "start:desktop": "npx electron electron/main.js",
+    "build:desktop": "node scripts/bundle.js && npx electron-builder",
+    "test:vision": "node scripts/test-vision-analysis.js"
   },
   "engines": {
     "node": ">=18"

@@ -6,7 +6,7 @@ function post(path, data = {}) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(data);
     const req = http.request({
-      hostname: 'localhost',
+      hostname: '127.0.0.1',
       port: 4000,
       path: '/api' + path,
       method: 'POST',

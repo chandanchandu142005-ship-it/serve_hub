@@ -1495,6 +1495,212 @@ tbody tr:hover{background:var(--surface)}
   line-height: 1.4;
 }
 
+/* ============================================================
+   AUTOMATIC DEDICATED MOBILE UI & NATIVE APP DESIGN SYSTEM
+   ============================================================ */
+
+/* 1. Mobile Fixed Bottom Navigation Bar */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 62px;
+  background: var(--card);
+  border-top: 1.5px solid var(--line);
+  z-index: 9999;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.b-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-3);
+  flex: 1;
+  height: 100%;
+  transition: color 0.2s ease, transform 0.15s ease;
+  position: relative;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.b-nav-link .b-nav-ic {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  transition: transform 0.2s ease;
+}
+
+.b-nav-link.active {
+  color: var(--primary-600);
+}
+
+.b-nav-link.active .b-nav-ic {
+  transform: translateY(-2px) scale(1.1);
+}
+
+.b-nav-link.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 24px;
+  height: 3px;
+  background: var(--primary-600);
+  border-radius: 0 0 4px 4px;
+}
+
+/* 2. Horizontal Category Scroll Row for Mobile */
+.mobile-cat-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 6px 4px 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.mobile-cat-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.m-cat-chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 76px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.2s ease;
+}
+
+.m-cat-chip:active {
+  transform: scale(0.94);
+}
+
+.m-cat-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.2s ease;
+}
+
+.m-cat-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* 3. Mobile Layout Media Queries (<= 768px) */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    padding-bottom: 74px !important;
+  }
+  .bottom-nav {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .nav-links, .nav-hide-m {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .grid.g4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .grid.g3, .grid.g2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .main {
+    padding: 20px 16px 60px !important;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .modal-box {
+    width: 94% !important;
+    max-width: 94% !important;
+    margin: 16px auto !important;
+    padding: 20px 16px !important;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  .btn, .icon-btn, input, select, button {
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* 4. Compact Mobile & Full-Screen Mobile Chatbot (<= 640px) */
+@media (max-width: 640px) {
+  .hero h1 {
+    font-size: clamp(26px, 6.5vw, 36px) !important;
+  }
+  .hero .lead {
+    font-size: 13.5px !important;
+  }
+  .stat-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .svc-card {
+    border-radius: 14px !important;
+  }
+  .svc-card .svc-body {
+    padding: 12px !important;
+  }
+  .svc-card h3 {
+    font-size: 13.5px !important;
+  }
+  .chatbot {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    z-index: 10000 !important;
+  }
+}
+
+/* 5. Ultra-Compact Mobile (<= 360px) */
+@media (max-width: 360px) {
+  .grid.g4, .grid.g3, .grid.g2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 
 
 
@@ -2129,7 +2335,12 @@ window.Store = (() => {
     return { ...l, label, state: city ? city.state : '' };
   };
 
-  return { state, persist, STATUSES, currentUser, isLoggedIn, login, logout, addBooking, bookingById, advanceBooking, rateBooking, statusIndex, statusMeta, toggleFav, toggleWish, isFav, isWish, walletTx, addPoints, applyCoupon, sendMsg, getChat, createTicket, markAllRead, unreadCount, addNotif, demoPro, setLocation, currentLocation };
+  let selectedPhoto = null;
+  const setSelectedPhoto = p => { selectedPhoto = p; };
+  const getSelectedPhoto = () => selectedPhoto;
+  const clearSelectedPhoto = () => { selectedPhoto = null; };
+
+  return { state, persist, STATUSES, currentUser, isLoggedIn, login, logout, addBooking, bookingById, advanceBooking, rateBooking, statusIndex, statusMeta, toggleFav, toggleWish, isFav, isWish, walletTx, addPoints, applyCoupon, sendMsg, getChat, createTicket, markAllRead, unreadCount, addNotif, demoPro, setLocation, currentLocation, setSelectedPhoto, getSelectedPhoto, clearSelectedPhoto };
 })();
 
 </script>
@@ -2428,7 +2639,23 @@ window.U = (() => {
       <div class="m-eta"><span class="dot-blue"></span>ETA ~8 min</div>
     </div>`;
 
-  return { $, $$, icon, money, esc, stars, ratingPill, avatar, uid, rand, debounce, fmtDate, fmtTime, timeAgo, toast, openModal, closeModal, modalShell, skel, pageSkel, observeReveals, countUp, areaChart, barChart, animateBars, donut, crumbs, statusPill, stepper, wireAcc, wireTabs, wireCarousel, skeletonWrap, fileToDataURL, genMap };
+  const bottomNav = path => {
+    const p = path || location.hash || '#/';
+    const isHome = p === '#/' || p === '' || p === '#/home';
+    const isCat = p.indexOf('#/categor') === 0;
+    const isBookings = p.indexOf('#/dashboard/bookings') === 0 || p.indexOf('#/track') === 0;
+    const isProfile = p.indexOf('#/dashboard') === 0 && !isBookings;
+    return `
+      <nav class="bottom-nav" aria-label="Mobile Bottom Navigation">
+        <a href="#/" class="b-nav-link ${isHome ? 'active' : ''}"><span class="b-nav-ic">${icon('home', 20)}</span><span>Home</span></a>
+        <a href="#/categories" class="b-nav-link ${isCat ? 'active' : ''}"><span class="b-nav-ic">${icon('grid', 20)}</span><span>Categories</span></a>
+        <a href="#/dashboard/bookings" class="b-nav-link ${isBookings ? 'active' : ''}"><span class="b-nav-ic">${icon('calendar', 20)}</span><span>Bookings</span></a>
+        <button class="b-nav-link" data-act="chat-popup" aria-label="Open AI Assistant"><span class="b-nav-ic">${icon('chat', 20)}</span><span>Chat</span></button>
+        <a href="#/dashboard/overview" class="b-nav-link ${isProfile ? 'active' : ''}"><span class="b-nav-ic">${icon('user', 20)}</span><span>Profile</span></a>
+      </nav>`;
+  };
+
+  return { $, $$, icon, money, esc, stars, ratingPill, avatar, uid, rand, debounce, fmtDate, fmtTime, timeAgo, toast, openModal, closeModal, modalShell, skel, pageSkel, observeReveals, countUp, areaChart, barChart, animateBars, donut, crumbs, statusPill, stepper, wireAcc, wireTabs, wireCarousel, skeletonWrap, fileToDataURL, genMap, bottomNav };
 })();
 
 </script>
@@ -4390,7 +4617,7 @@ window.Auth = (() => {
         googleId: u.googleId || '',
       });
       toast(`Authenticated via Google OAuth! Welcome, ${u.name || 'friend'} 🎉`, 'success');
-      const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/dashboard/overview';
+      const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
       setTimeout(() => {
         location.hash = window.App.afterLogin(target);
       }, 500);
@@ -4555,7 +4782,7 @@ window.Auth = (() => {
             googleId: u.googleId || '',
           });
           toast(`Welcome back, ${u.name || 'friend'}! 🎉`, 'success');
-          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/dashboard/overview';
+          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
           setTimeout(() => {
             location.hash = window.App.afterLogin(target);
           }, 400);
@@ -4664,7 +4891,7 @@ window.Auth = (() => {
             googleId: u.googleId || '',
           });
           toast(`Account created! Welcome to ServiceHub, ${u.name || 'friend'} 🎉`, 'success');
-          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/dashboard/overview';
+          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
           setTimeout(() => {
             location.hash = window.App.afterLogin(target);
           }, 400);
@@ -4977,8 +5204,9 @@ window.Auth = (() => {
     render,
     triggerGoogleOAuth,
     doLogin: (role, email) => {
-      Store.login({ name: email.split('@')[0], role });
-      location.hash = window.App.afterLogin('#/dashboard/overview');
+      Store.login({ name: email ? email.split('@')[0] : 'Customer', role: role || 'customer', email: email || 'customer@servehub.in' });
+      const target = role === 'admin' ? '#/admin/overview' : role === 'pro' || role === 'professional' ? '#/pro/overview' : '#/';
+      location.hash = window.App.afterLogin(target);
     },
   };
 })();
@@ -5181,6 +5409,7 @@ window.Booking = (() => {
           const P = packsOf(s)[bk.pack];
           const addr = Store.state.addr.find(a => a.id === bk.addr) || {};
           const locDet = bk.locationDetails || {};
+          const photo = Store.getSelectedPhoto();
           const b = Store.addBooking({
             serviceId: s.id, serviceName: s.name, cat: s.cat, pack: P.name, packPrice: P.price, dur: P.dur,
             date: bk.date || Date.now(), time: bk.time, instant: bk.instant, emergency: bk.emergency,
@@ -5194,9 +5423,10 @@ window.Booking = (() => {
             country: locDet.country || addr.country || '',
             proId: pro.id, proName: pro.name, proRating: pro.rating,
             sub: P.price, disc: bk.disc, gst: Math.round(P.price * 0.18), total: total(), payMethod: bk.payMethod,
-            coupon: bk.coupon, notes: bk.notes || '',
+            coupon: bk.coupon, notes: bk.notes || '', problemPhoto: photo || null,
             walletUsed: bk.payMethod === 'wallet' ? Math.min(Store.state.wallet, total()) : 0,
           });
+          Store.clearSelectedPhoto();
           if (bk.payMethod === 'wallet') { const used = Math.min(Store.state.wallet, total()); Store.walletTx(-used, 'booking ' + b.id); }
           Store.sendMsg(b.id, `Hi! This is ${pro.name} from Servehub. Your ${s.name} booking for ${fmtDate(b.date)} at ${b.time} is confirmed. See you soon! 👋`, 'them');
           Store.addNotif('calendar', 'Booking confirmed', `Booking ${b.id} for ${s.name} on ${fmtDate(b.date)} at ${b.time} is confirmed. Track it live!`);
@@ -7856,7 +8086,7 @@ window.Chatbot = (() => {
       <button class="fab fab-main" data-act="search" aria-label="Book a service" title="Book a service"><span class="fab-pulse"></span>${icon('calendar', 22)}</button>
     </div>`;
 
-  const publicLayout = (inner, showFloat = true) => `${navBar()}<main id="outlet" class="page-enter">${inner}</main>${footer()}${showFloat ? floating() : ''}`;
+  const publicLayout = (inner, showFloat = true, route = '') => `${navBar()}<main id="outlet" class="page-enter">${inner}</main>${footer()}${showFloat ? floating() : ''}${U.bottomNav(route)}`;
 
   /* ---------------- SEARCH MODAL ---------------- */
   let searchMode = 'services', searchQ = '', lastResults = { services: [], categories: [], pros: [], cities: [] };
@@ -8146,6 +8376,7 @@ window.Chatbot = (() => {
   /* ---------------- ROUTER ---------------- */
   const routes = [
     { m: '^$', name: 'landing', lay: 'public', render: () => Public.render('landing') },
+    { m: '^home$', name: 'home', lay: 'public', render: () => Public.render('landing') },
     { m: '^categories$', name: 'categories', lay: 'public', render: () => Public.render('categories') },
     { m: '^category/([^/]+)$', name: 'category', lay: 'public', render: p => Public.render('category', { slug: decodeURIComponent(p[0]) }) },
     { m: '^service/([^/]+)$', name: 'service', lay: 'public', render: p => Public.render('service', { id: p[0] }) },
@@ -8210,7 +8441,7 @@ window.Chatbot = (() => {
     }
     const lay = out.lay || r.lay;
     const noFloat = ['book', 'track', 'invoice'].includes(r?.name);
-    app.innerHTML = lay === 'public' ? publicLayout(out.html, !noFloat) : out.html;
+    app.innerHTML = lay === 'public' ? publicLayout(out.html, !noFloat, hash) : (out.html + U.bottomNav(hash));
     if (out.wire) out.wire();
     // common wiring
     U.wireAcc(document); U.wireTabs(document); U.wireCarousel(document); U.observeReveals(document);
@@ -8222,7 +8453,7 @@ window.Chatbot = (() => {
   /* ---------------- POST-LOGIN REDIRECT ---------------- */
   // After a guest is sent to login from a booking page, return them there once they sign in.
   const afterLogin = fallback => {
-    let target = fallback;
+    let target = fallback || '#/';
     try {
       const pending = sessionStorage.getItem('sh:redirect');
       if (pending && pending.indexOf('#') === 0) { sessionStorage.removeItem('sh:redirect'); target = pending; }
@@ -8261,14 +8492,14 @@ window.Chatbot = (() => {
       el.setAttribute('title', isPw ? 'Hide password' : 'Show password');
     },
     'edit-phone': () => { location.hash = '#/register'; },
-    'oauth': el => { Store.login({ name: el.dataset.provider + ' User', role: 'customer', email: 'user@' + el.dataset.provider.toLowerCase() + '.com' }); Store.walletTx(150, 'signup bonus'); toast('Signed in with ' + el.dataset.provider + ' ✓'); location.hash = afterLogin('#/dashboard/overview'); },
+    'oauth': el => { Store.login({ name: el.dataset.provider + ' User', role: 'customer', email: 'user@' + el.dataset.provider.toLowerCase() + '.com' }); Store.walletTx(150, 'signup bonus'); toast('Signed in with ' + el.dataset.provider + ' ✓'); location.hash = afterLogin('#/'); },
     'demo-login': () => {
       const role = (U.$('input[name="role"]:checked') || {}).value || 'customer';
       if (role !== 'customer') { Auth.doLogin(role, 'demo@servehub.in', true); return; }
-      Store.login({ name: 'Priya Sharma', role: 'customer', email: 'priya@demo.com', phone: '+91 98765 43210' }); Store.addNotif('bell', 'Welcome back!', 'Demo session started. Everything is fully interactive.'); toast('Demo login successful — welcome, Priya! 🎉'); location.hash = afterLogin('#/dashboard/overview');
+      Store.login({ name: 'Priya Sharma', role: 'customer', email: 'priya@demo.com', phone: '+91 98765 43210' }); Store.addNotif('bell', 'Welcome back!', 'Demo session started. Everything is fully interactive.'); toast('Demo login successful — welcome, Priya! 🎉'); location.hash = afterLogin('#/');
     },
     'admin-login': () => { Store.login({ name: 'Servehub Admin', role: 'admin' }); toast('Admin authenticated 🔐'); location.hash = '#/admin/overview'; },
-    'logout': () => { closeModal(); Store.logout(); toast('Logged out. See you soon! 👋'); location.hash = '#/'; },
+    'logout': () => { closeModal(); Store.logout(); toast('Logged out successfully 👋'); location.hash = '#/login'; },
     'wish': el => { const on = Store.toggleWish(el.dataset.id); el.classList.toggle('on', on); el.style.color = on ? 'var(--danger)' : ''; toast(on ? 'Added to wishlist ❤️' : 'Removed from wishlist', on ? 'success' : 'info'); },
     'fav': el => { const on = Store.toggleFav(el.dataset.id); el.classList.toggle('on', on); el.style.color = on ? 'var(--danger)' : ''; toast(on ? 'Saved to favorites ⭐' : 'Removed from favorites', on ? 'success' : 'info'); },
     'chat-popup': () => Chatbot.toggle(),

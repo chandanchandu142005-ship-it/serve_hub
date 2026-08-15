@@ -202,5 +202,10 @@ window.Store = (() => {
     return { ...l, label, state: city ? city.state : '' };
   };
 
-  return { state, persist, STATUSES, currentUser, isLoggedIn, login, logout, addBooking, bookingById, advanceBooking, rateBooking, statusIndex, statusMeta, toggleFav, toggleWish, isFav, isWish, walletTx, addPoints, applyCoupon, sendMsg, getChat, createTicket, markAllRead, unreadCount, addNotif, demoPro, setLocation, currentLocation };
+  let selectedPhoto = null;
+  const setSelectedPhoto = p => { selectedPhoto = p; };
+  const getSelectedPhoto = () => selectedPhoto;
+  const clearSelectedPhoto = () => { selectedPhoto = null; };
+
+  return { state, persist, STATUSES, currentUser, isLoggedIn, login, logout, addBooking, bookingById, advanceBooking, rateBooking, statusIndex, statusMeta, toggleFav, toggleWish, isFav, isWish, walletTx, addPoints, applyCoupon, sendMsg, getChat, createTicket, markAllRead, unreadCount, addNotif, demoPro, setLocation, currentLocation, setSelectedPhoto, getSelectedPhoto, clearSelectedPhoto };
 })();

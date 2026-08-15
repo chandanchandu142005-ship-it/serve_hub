@@ -525,7 +525,7 @@ window.Auth = (() => {
         googleId: u.googleId || '',
       });
       toast(`Authenticated via Google OAuth! Welcome, ${u.name || 'friend'} 🎉`, 'success');
-      const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/dashboard/overview';
+      const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
       setTimeout(() => {
         location.hash = window.App.afterLogin(target);
       }, 500);
@@ -690,7 +690,7 @@ window.Auth = (() => {
             googleId: u.googleId || '',
           });
           toast(`Welcome back, ${u.name || 'friend'}! 🎉`, 'success');
-          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/dashboard/overview';
+          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
           setTimeout(() => {
             location.hash = window.App.afterLogin(target);
           }, 400);
@@ -799,7 +799,7 @@ window.Auth = (() => {
             googleId: u.googleId || '',
           });
           toast(`Account created! Welcome to ServiceHub, ${u.name || 'friend'} 🎉`, 'success');
-          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/dashboard/overview';
+          const target = u.role === 'admin' ? '#/admin/overview' : u.role === 'pro' || u.role === 'professional' ? '#/pro/overview' : '#/';
           setTimeout(() => {
             location.hash = window.App.afterLogin(target);
           }, 400);
@@ -1112,8 +1112,9 @@ window.Auth = (() => {
     render,
     triggerGoogleOAuth,
     doLogin: (role, email) => {
-      Store.login({ name: email.split('@')[0], role });
-      location.hash = window.App.afterLogin('#/dashboard/overview');
+      Store.login({ name: email ? email.split('@')[0] : 'Customer', role: role || 'customer', email: email || 'customer@servehub.in' });
+      const target = role === 'admin' ? '#/admin/overview' : role === 'pro' || role === 'professional' ? '#/pro/overview' : '#/';
+      location.hash = window.App.afterLogin(target);
     },
   };
 })();

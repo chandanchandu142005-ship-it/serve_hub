@@ -18,46 +18,10 @@ app.use(cors());                       // allow the SPA (any origin) to call the
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// GET /api/health — liveness + which storage backend is live
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true, service: 'servehub-api', db: mode(), time: new Date().toISOString() });
-});
-
-app.use('/api/auth', routes.auth);
-app.use('/api/services', routes.services);
-app.use('/api/professionals', routes.professionals);
-app.use('/api/bookings', routes.bookings);
-app.use('/api/payments', routes.payments);
-app.use('/api/ai', routes.ai);
-app.use('/api', routes.customer); // /api/reviews, /api/addresses, /api/tickets, /api/notifications
-app.use('/api/admin', routes.admin);
-
-app.use('/api', (req, res) => res.status(404).json({ error: 'Endpoint not found' }));
-
-// Serve static assets from frontend directory
-const feDir = path.join(__dirname, '..', 'frontend');
-app.use(express.static(feDir));
-
-// Convenience: serve the built single-file frontend at /, /servehub, /servehub.html, etc.
-const feBuild = path.join(feDir, 'servehub.html');
-const feIndex = path.join(feDir, 'index.html');
-app.get(['/', '/index.html', '/servehub', '/servehub/', '/servehub.html', '/servehub/*'], (req, res) => {
-  if (require('fs').existsSync(feBuild)) return res.sendFile(feBuild);
-  if (require('fs').existsSync(feIndex)) return res.sendFile(feIndex);
-  res.status(404).json({ error: 'Frontend build not found — run: node scripts/bundle.js' });
-});
-
-// Central error handler
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  console.error('[api]', err);
-  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
-});
-
-const PORT = process.env.PORT || 4000;
+let dbInitialized = false;
+let dbInitPromise = null;
 
 async function bootstrapAdmin() {
-  // Demo super-admin so the admin panel is reachable out of the box.
   const email = 'admin@servehub.com';
   if (!(await repo.findUserByEmail(email))) {
     await repo.createUser({
@@ -67,9 +31,6 @@ async function bootstrapAdmin() {
     console.log('[db] demo admin created → admin@servehub.com / admin123');
   }
 }
-
-let dbInitialized = false;
-let dbInitPromise = null;
 
 async function ensureDbInit() {
   if (dbInitialized) return;
@@ -92,6 +53,44 @@ app.use(async (req, res, next) => {
     next(err);
   }
 });
+
+// GET /api/health — liveness + which storage backend is live
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true, service: 'servehub-api', db: mode(), time: new Date().toISOString() });
+});
+
+app.use('/api/auth', routes.auth);
+app.use('/api/services', routes.services);
+app.use('/api/professionals', routes.professionals);
+app.use('/api/bookings', routes.bookings);
+app.use('/api/payments', routes.payments);
+app.use('/api/ai', routes.ai);
+app.use('/api', routes.customer); // /api/reviews, /api/addresses, /api/tickets, /api/notifications
+app.use('/api/admin', routes.admin);
+
+app.use('/api', (req, res) => res.status(404).json({ error: 'Endpoint not found' }));
+
+// Serve static assets from frontend directory
+const feDir = path.join(__dirname, '..', 'frontend');
+app.use(express.static(feDir));
+
+// Convenience: serve built single-file frontend at /, /servehub, /servehub.html, etc.
+const feBuild = path.join(feDir, 'servehub.html');
+const feIndex = path.join(feDir, 'index.html');
+app.get(['/', '/index.html', '/servehub', '/servehub/', '/servehub.html', '/servehub/*'], (req, res) => {
+  if (require('fs').existsSync(feBuild)) return res.sendFile(feBuild);
+  if (require('fs').existsSync(feIndex)) return res.sendFile(feIndex);
+  res.status(404).json({ error: 'Frontend build not found — run: node scripts/bundle.js' });
+});
+
+// Central error handler
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error('[api]', err);
+  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+});
+
+const PORT = process.env.PORT || 4000;
 
 if (require.main === module) {
   ensureDbInit()

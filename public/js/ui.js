@@ -292,5 +292,21 @@ window.U = (() => {
       <div class="m-eta"><span class="dot-blue"></span>ETA ~8 min</div>
     </div>`;
 
-  return { $, $$, icon, money, esc, stars, ratingPill, avatar, uid, rand, debounce, fmtDate, fmtTime, timeAgo, toast, openModal, closeModal, modalShell, skel, pageSkel, observeReveals, countUp, areaChart, barChart, animateBars, donut, crumbs, statusPill, stepper, wireAcc, wireTabs, wireCarousel, skeletonWrap, fileToDataURL, genMap };
+  const bottomNav = path => {
+    const p = path || location.hash || '#/';
+    const isHome = p === '#/' || p === '' || p === '#/home';
+    const isCat = p.indexOf('#/categor') === 0;
+    const isBookings = p.indexOf('#/dashboard/bookings') === 0 || p.indexOf('#/track') === 0;
+    const isProfile = p.indexOf('#/dashboard') === 0 && !isBookings;
+    return `
+      <nav class="bottom-nav" aria-label="Mobile Bottom Navigation">
+        <a href="#/" class="b-nav-link ${isHome ? 'active' : ''}"><span class="b-nav-ic">${icon('home', 20)}</span><span>Home</span></a>
+        <a href="#/categories" class="b-nav-link ${isCat ? 'active' : ''}"><span class="b-nav-ic">${icon('grid', 20)}</span><span>Categories</span></a>
+        <a href="#/dashboard/bookings" class="b-nav-link ${isBookings ? 'active' : ''}"><span class="b-nav-ic">${icon('calendar', 20)}</span><span>Bookings</span></a>
+        <button class="b-nav-link" data-act="chat-popup" aria-label="Open AI Assistant"><span class="b-nav-ic">${icon('chat', 20)}</span><span>Chat</span></button>
+        <a href="#/dashboard/overview" class="b-nav-link ${isProfile ? 'active' : ''}"><span class="b-nav-ic">${icon('user', 20)}</span><span>Profile</span></a>
+      </nav>`;
+  };
+
+  return { $, $$, icon, money, esc, stars, ratingPill, avatar, uid, rand, debounce, fmtDate, fmtTime, timeAgo, toast, openModal, closeModal, modalShell, skel, pageSkel, observeReveals, countUp, areaChart, barChart, animateBars, donut, crumbs, statusPill, stepper, wireAcc, wireTabs, wireCarousel, skeletonWrap, fileToDataURL, genMap, bottomNav };
 })();

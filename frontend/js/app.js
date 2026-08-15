@@ -176,7 +176,7 @@
       <button class="fab fab-main" data-act="search" aria-label="Book a service" title="Book a service"><span class="fab-pulse"></span>${icon('calendar', 22)}</button>
     </div>`;
 
-  const publicLayout = (inner, showFloat = true) => `${navBar()}<main id="outlet" class="page-enter">${inner}</main>${footer()}${showFloat ? floating() : ''}`;
+  const publicLayout = (inner, showFloat = true, route = '') => `${navBar()}<main id="outlet" class="page-enter">${inner}</main>${footer()}${showFloat ? floating() : ''}${U.bottomNav(route)}`;
 
   /* ---------------- SEARCH MODAL ---------------- */
   let searchMode = 'services', searchQ = '', lastResults = { services: [], categories: [], pros: [], cities: [] };
@@ -466,6 +466,7 @@
   /* ---------------- ROUTER ---------------- */
   const routes = [
     { m: '^$', name: 'landing', lay: 'public', render: () => Public.render('landing') },
+    { m: '^home$', name: 'home', lay: 'public', render: () => Public.render('landing') },
     { m: '^categories$', name: 'categories', lay: 'public', render: () => Public.render('categories') },
     { m: '^category/([^/]+)$', name: 'category', lay: 'public', render: p => Public.render('category', { slug: decodeURIComponent(p[0]) }) },
     { m: '^service/([^/]+)$', name: 'service', lay: 'public', render: p => Public.render('service', { id: p[0] }) },
@@ -530,7 +531,7 @@
     }
     const lay = out.lay || r.lay;
     const noFloat = ['book', 'track', 'invoice'].includes(r?.name);
-    app.innerHTML = lay === 'public' ? publicLayout(out.html, !noFloat) : out.html;
+    app.innerHTML = lay === 'public' ? publicLayout(out.html, !noFloat, hash) : (out.html + U.bottomNav(hash));
     if (out.wire) out.wire();
     // common wiring
     U.wireAcc(document); U.wireTabs(document); U.wireCarousel(document); U.observeReveals(document);
@@ -542,7 +543,7 @@
   /* ---------------- POST-LOGIN REDIRECT ---------------- */
   // After a guest is sent to login from a booking page, return them there once they sign in.
   const afterLogin = fallback => {
-    let target = fallback;
+    let target = fallback || '#/';
     try {
       const pending = sessionStorage.getItem('sh:redirect');
       if (pending && pending.indexOf('#') === 0) { sessionStorage.removeItem('sh:redirect'); target = pending; }
@@ -581,14 +582,14 @@
       el.setAttribute('title', isPw ? 'Hide password' : 'Show password');
     },
     'edit-phone': () => { location.hash = '#/register'; },
-    'oauth': el => { Store.login({ name: el.dataset.provider + ' User', role: 'customer', email: 'user@' + el.dataset.provider.toLowerCase() + '.com' }); Store.walletTx(150, 'signup bonus'); toast('Signed in with ' + el.dataset.provider + ' ✓'); location.hash = afterLogin('#/dashboard/overview'); },
+    'oauth': el => { Store.login({ name: el.dataset.provider + ' User', role: 'customer', email: 'user@' + el.dataset.provider.toLowerCase() + '.com' }); Store.walletTx(150, 'signup bonus'); toast('Signed in with ' + el.dataset.provider + ' ✓'); location.hash = afterLogin('#/'); },
     'demo-login': () => {
       const role = (U.$('input[name="role"]:checked') || {}).value || 'customer';
       if (role !== 'customer') { Auth.doLogin(role, 'demo@servehub.in', true); return; }
-      Store.login({ name: 'Priya Sharma', role: 'customer', email: 'priya@demo.com', phone: '+91 98765 43210' }); Store.addNotif('bell', 'Welcome back!', 'Demo session started. Everything is fully interactive.'); toast('Demo login successful — welcome, Priya! 🎉'); location.hash = afterLogin('#/dashboard/overview');
+      Store.login({ name: 'Priya Sharma', role: 'customer', email: 'priya@demo.com', phone: '+91 98765 43210' }); Store.addNotif('bell', 'Welcome back!', 'Demo session started. Everything is fully interactive.'); toast('Demo login successful — welcome, Priya! 🎉'); location.hash = afterLogin('#/');
     },
     'admin-login': () => { Store.login({ name: 'Servehub Admin', role: 'admin' }); toast('Admin authenticated 🔐'); location.hash = '#/admin/overview'; },
-    'logout': () => { closeModal(); Store.logout(); toast('Logged out. See you soon! 👋'); location.hash = '#/'; },
+    'logout': () => { closeModal(); Store.logout(); toast('Logged out successfully 👋'); location.hash = '#/login'; },
     'wish': el => { const on = Store.toggleWish(el.dataset.id); el.classList.toggle('on', on); el.style.color = on ? 'var(--danger)' : ''; toast(on ? 'Added to wishlist ❤️' : 'Removed from wishlist', on ? 'success' : 'info'); },
     'fav': el => { const on = Store.toggleFav(el.dataset.id); el.classList.toggle('on', on); el.style.color = on ? 'var(--danger)' : ''; toast(on ? 'Saved to favorites ⭐' : 'Removed from favorites', on ? 'success' : 'info'); },
     'chat-popup': () => Chatbot.toggle(),

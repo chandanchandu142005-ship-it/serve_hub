@@ -25,8 +25,10 @@ const CATEGORY_MAP = {
   'laptop repair': { cat: 'laptop', defaultName: 'Laptop Repair' },
   'laptop': { cat: 'laptop', defaultName: 'Laptop Repair' },
   'computer repair': { cat: 'laptop', defaultName: 'Laptop Repair' },
+  'tv repair': { cat: 'appliance', defaultName: 'TV Repair' },
+  'television repair': { cat: 'appliance', defaultName: 'TV Repair' },
   'washing machine repair': { cat: 'appliance', defaultName: 'Washing Machine Repair' },
-  'refrigerator repair': { cat: 'appliance', defaultName: 'Appliance Repair' },
+  'refrigerator repair': { cat: 'appliance', defaultName: 'Refrigerator Repair' },
   'appliance repair': { cat: 'appliance', defaultName: 'Appliance Repair' },
   'carpenter': { cat: 'carpenter', defaultName: 'Carpenter — Furniture' },
   'furniture repair': { cat: 'carpenter', defaultName: 'Carpenter — Furniture' },
@@ -35,7 +37,7 @@ const CATEGORY_MAP = {
 };
 
 /**
- * Call Gemini 1.5 Flash Vision API using native HTTPS
+ * Call Google Gemini Vision API using native HTTPS
  */
 async function callGeminiVision(base64Data, mimeType, apiKey) {
   return new Promise((resolve) => {
@@ -45,10 +47,12 @@ async function callGeminiVision(base64Data, mimeType, apiKey) {
         parts: [
           {
             text: `Analyze this image for a home service marketplace. Return ONLY a raw JSON object (no markdown, no backticks) with keys:
-"object": detected device/fixture/area (e.g. "Air Conditioner", "Water Pipe", "Electrical Switchboard", "Room Floor", "Laptop", "Washing Machine", "Wooden Cabinet"),
-"problem": visible defect or issue,
+"object": detected device/fixture/area (e.g. "Water Pipe", "Air Conditioner", "Electrical Switch", "Washing Machine", "Wall Crack", "Wooden Furniture"),
+"problem": visible defect or issue (e.g. "Water Leakage", "Short Circuit / Burn", "Cooling Failure", "Drainage Blockage"),
 "confidence": float between 0.0 and 1.0,
-"recommendedService": one of ["AC Repair", "Plumbing", "Electrician", "Home Cleaning", "Laptop Repair", "Washing Machine Repair", "Refrigerator Repair", "Carpenter", "Painting", "Pest Control"],
+"recommendedService": one of ["Plumbing", "Electrician", "AC Repair", "Washing Machine Repair", "Refrigerator Repair", "TV Repair", "Carpenter", "Painting", "Pest Control", "Home Cleaning", "Appliance Repair", "Laptop Repair"],
+"severity": one of ["Low", "Medium", "High"],
+"guidance": short 1-2 sentence safety tip (e.g. "Please turn off the main water valve to prevent flooding."),
 "reason": short 1-sentence rationale based on visual evidence.`
           },
           {
@@ -105,7 +109,7 @@ async function callOpenAIVision(base64Data, mimeType, apiKey) {
       messages: [{
         role: 'user',
         content: [
-          { type: 'text', text: 'Analyze this home repair image. Return ONLY JSON {"object":"...","problem":"...","confidence":0.95,"recommendedService":"...","reason":"..."}' },
+          { type: 'text', text: 'Analyze this home repair image. Return ONLY JSON {"object":"...","problem":"...","confidence":0.95,"recommendedService":"...","severity":"Medium","guidance":"...","reason":"..."}' },
           { type: 'image_url', image_url: { url: base64Data.startsWith('data:') ? base64Data : `data:${mimeType || 'image/jpeg'};base64,${base64Data}` } }
         ]
       }],
@@ -187,6 +191,8 @@ function analyzeBinaryImagePixels(buffer) {
       problem: 'Indistinct visual features',
       confidence: 0.35,
       recommendedService: null,
+      severity: 'Low',
+      guidance: 'Please capture a clearer, well-lit photo of the damaged fixture or area.',
       reason: 'The image has uniform texture or low feature contrast.'
     };
   }
@@ -195,20 +201,24 @@ function analyzeBinaryImagePixels(buffer) {
   if (avgB > 190 && avgR < 50 && avgG < 140) {
     return {
       object: 'Air Conditioner',
-      problem: 'Possible cooling coil or drainage fault',
+      problem: 'Cooling coil leak / Airflow fault',
       confidence: 0.92,
       recommendedService: 'AC Repair',
-      reason: 'The uploaded image appears to show an AC unit that may require repair or servicing.'
+      severity: 'Medium',
+      guidance: 'Turn off the AC breaker if there is water leakage or unusual noise.',
+      reason: 'The uploaded image appears to show an AC unit that requires repair or servicing.'
     };
   }
 
   if (avgB > 140 && avgG > 120 && avgR < 80) {
     return {
       object: 'Water Pipe / Tap',
-      problem: 'Water leakage',
+      problem: 'Water pipe leakage',
       confidence: 0.90,
       recommendedService: 'Plumbing',
-      reason: 'The uploaded image appears to show a plumbing fixture or pipe leakage.'
+      severity: 'Medium',
+      guidance: 'Shut off the main water valve to prevent further water damage while waiting for inspection.',
+      reason: 'The uploaded image appears to show a plumbing fixture or water pipe leakage.'
     };
   }
 
@@ -218,16 +228,20 @@ function analyzeBinaryImagePixels(buffer) {
       problem: 'Wiring or switch damage',
       confidence: 0.89,
       recommendedService: 'Electrician',
-      reason: 'The uploaded image appears to show an electrical switchboard or wiring component.'
+      severity: 'High',
+      guidance: 'Do not touch exposed wires or wet switches. Switch off the main MCB breaker immediately.',
+      reason: 'The uploaded image appears to show an electrical switchboard or wiring issue.'
     };
   }
 
   if (avgLum < 75 && avgB > avgR) {
     return {
       object: 'Laptop / Screen',
-      problem: 'Physical damage or display issue',
+      problem: 'Display damage or hardware fault',
       confidence: 0.85,
       recommendedService: 'Laptop Repair',
+      severity: 'Low',
+      guidance: 'Power down the device safely and disconnect the charger.',
       reason: 'The uploaded image appears to show a laptop or computer screen requiring repair.'
     };
   }
@@ -238,6 +252,8 @@ function analyzeBinaryImagePixels(buffer) {
       problem: 'Wood damage or loose hinge',
       confidence: 0.88,
       recommendedService: 'Carpenter',
+      severity: 'Low',
+      guidance: 'Keep doors or furniture supported to avoid sudden falling or sharp splinter edges.',
       reason: 'The uploaded image appears to show wooden furniture or door repair.'
     };
   }
@@ -245,9 +261,11 @@ function analyzeBinaryImagePixels(buffer) {
   if (avgLum > 140 && avgR > 120 && avgG > 120 && avgB > 120) {
     return {
       object: 'Room / Floor Area',
-      problem: 'Cleaning required',
+      problem: 'Deep cleaning required',
       confidence: 0.86,
       recommendedService: 'Home Cleaning',
+      severity: 'Low',
+      guidance: 'Keep the affected room ventilated and avoid walking on slippery wet surfaces.',
       reason: 'The uploaded image appears to show a room or floor surface suitable for deep cleaning.'
     };
   }
@@ -255,9 +273,11 @@ function analyzeBinaryImagePixels(buffer) {
   // Default Fallback Category
   return {
     object: 'Home Fixture / Appliance',
-    problem: 'Maintenance required',
+    problem: 'Appliance or fixture maintenance required',
     confidence: 0.82,
     recommendedService: 'AC Repair',
+    severity: 'Medium',
+    guidance: 'Please consider booking a qualified technician for professional inspection.',
     reason: 'The uploaded image shows a home appliance or fixture requiring diagnostic servicing.'
   };
 }
@@ -334,25 +354,23 @@ async function analyzeImagePayload({ imageBase64, mimeType = 'image/jpeg' }) {
 
   const startingPrice = primaryService.price || primaryService.priceFrom || 299;
   const serviceName = primaryService.name || catMapping.defaultName;
+  const severity = visionResult.severity || 'Medium';
+  const guidance = visionResult.guidance || 'Please consider booking a plumbing service for inspection.';
 
-  // STEP 6: Format Dynamic Chatbot Response
-  const reply = `🔍 Image analyzed
-
-**Detected:** ${visionResult.object || 'Home Fixture'}  
-**Problem:** ${visionResult.problem || 'Maintenance required'}
-
-**Recommended service:** ${serviceName}
-
-**Reason:** ${visionResult.reason || `The uploaded image appears to show a ${serviceName} issue.`}
-
-**Starting price:** ₹${startingPrice}`;
+  // STEP 6: Format Structured & Human-Readable Chatbot Response
+  const reply = `Possible issue: ${visionResult.problem || 'Water pipe leakage'}
+Recommended service: ${serviceName}
+Severity: ${severity}
+Guidance: ${guidance}`;
 
   return {
     success: true,
-    object: visionResult.object,
-    problem: visionResult.problem,
+    object: visionResult.object || 'Home Fixture',
+    problem: visionResult.problem || 'Maintenance required',
     confidence: visionResult.confidence || 0.9,
     recommendedService: serviceName,
+    severity,
+    guidance,
     reason: visionResult.reason,
     startingPrice,
     service: {
