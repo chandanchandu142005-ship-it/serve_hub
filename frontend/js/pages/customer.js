@@ -67,17 +67,56 @@ window.Customer = (() => {
       `<button class="btn btn-ghost" data-act="close-modal">Cancel</button><button class="btn btn-primary" id="al-save">${icon('check', 15)} Save address</button>`));
     
     // Device location detection handler
-    U.$('#al-detect-btn')?.addEventListener('click', () => {
+    U.$('#al-detect-btn')?.addEventListener('click', async () => {
       const btn = U.$('#al-detect-btn');
       const status = U.$('#al-detect-status');
-      if (!('geolocation' in navigator)) {
-        if (status) status.innerHTML = `<span style="color:var(--danger-600)">Browser location detection is not supported.</span>`;
-        toast('Location not supported', 'warn');
-        return;
-      }
       btn.disabled = true;
-      btn.innerHTML = `${icon('timer', 16)} Requesting location permission…`;
-      if (status) status.innerHTML = `<span style="color:var(--primary-600)">Please allow location access on your device…</span>`;
+      btn.innerHTML = `${icon('timer', 16)} Detecting location…`;
+      if (status) status.innerHTML = `<span style="color:var(--primary-600)">Detecting your location…</span>`;
+
+      const fallbackIpGeo = async () => {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.latitude && data.longitude) {
+              if (U.$('#al-line')) U.$('#al-line').value = [data.city, data.region].filter(Boolean).join(', ');
+              if (U.$('#al-area')) U.$('#al-area').value = data.city || '';
+              if (U.$('#al-city')) U.$('#al-city').value = data.city || '';
+              if (U.$('#al-pin')) U.$('#al-pin').value = (data.postal || '').replace(/\D/g, '').slice(0, 6);
+              if (status) status.innerHTML = `<span style="color:var(--success-600)">📍 Current location loaded (${data.city || 'City'})!</span>`;
+              toast(`📍 Device location detected (${data.city || 'City'})!`, 'success');
+              btn.disabled = false;
+              btn.innerHTML = `${icon('navigation', 16)} Use current device location`;
+              return true;
+            }
+          }
+        } catch (e) {}
+
+        try {
+          const res = await fetch('https://ip-api.com/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.lat && data.lon) {
+              if (U.$('#al-line')) U.$('#al-line').value = [data.city, data.regionName].filter(Boolean).join(', ');
+              if (U.$('#al-area')) U.$('#al-area').value = data.city || '';
+              if (U.$('#al-city')) U.$('#al-city').value = data.city || '';
+              if (U.$('#al-pin')) U.$('#al-pin').value = (data.zip || '').replace(/\D/g, '').slice(0, 6);
+              if (status) status.innerHTML = `<span style="color:var(--success-600)">📍 Current location loaded (${data.city || 'City'})!</span>`;
+              toast(`📍 Device location detected (${data.city || 'City'})!`, 'success');
+              btn.disabled = false;
+              btn.innerHTML = `${icon('navigation', 16)} Use current device location`;
+              return true;
+            }
+          }
+        } catch (e) {}
+        return false;
+      };
+
+      if (!('geolocation' in navigator) || (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')) {
+        const ok = await fallbackIpGeo();
+        if (ok) return;
+      }
 
       navigator.geolocation.getCurrentPosition(async pos => {
         btn.innerHTML = `${icon('timer', 16)} Fetching location address…`;
@@ -108,14 +147,16 @@ window.Customer = (() => {
           if (city && U.$('#al-city')) U.$('#al-city').value = city;
           if (pin && U.$('#al-pin')) U.$('#al-pin').value = pin.replace(/\D/g, '').slice(0, 6);
           if (status) status.innerHTML = `<span style="color:var(--success-600)">📍 Current location loaded!</span>`;
-          toast('📍 Device location detected');
+          toast('📍 Device location detected', 'success');
         } catch (e) {
           if (status) status.innerHTML = `<span style="color:var(--warn-600)">Could not reverse-geocode location. Please type manually.</span>`;
         } finally {
           btn.disabled = false;
           btn.innerHTML = `${icon('navigation', 16)} Use current device location`;
         }
-      }, err => {
+      }, async err => {
+        const ok = await fallbackIpGeo();
+        if (ok) return;
         btn.disabled = false;
         btn.innerHTML = `${icon('navigation', 16)} Use current device location`;
         if (err.code === 1) {
@@ -125,7 +166,7 @@ window.Customer = (() => {
           if (status) status.innerHTML = `<span style="color:var(--danger-600)">Location unavailable. Please enter address manually.</span>`;
           toast('Could not detect location', 'warn');
         }
-      }, { enableHighAccuracy: true, timeout: 10000 });
+      }, { enableHighAccuracy: true, timeout: 6000 });
     });
 
     let saving = false;
