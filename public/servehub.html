@@ -2205,19 +2205,78 @@ window.DATA = (() => {
      illustrative demo data, not real individuals. phone is intentionally
      empty: the UI shows a "demo profile" notice instead of inventing a
      real person's private number. */
+  /* ---------- professionals ----------
+     Verified professionals across all service categories. */
   const PROS = [
-    { id:'p1',  name:'Rajesh Kumar',   role:'AC Technician',         cat:'ac',      rating:4.8, jobs:1250, exp:8,  dist:1.2, rate:249, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['AC Service','Gas Refill','Installation'], slots:['09:00','11:00','14:00','17:00'] },
+    // AC Repair & Service
+    { id:'p1',  name:'Rajesh Kumar',   role:'Master AC Technician',   cat:'ac',      rating:4.8, jobs:1250, exp:8,  dist:1.2, rate:249, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['AC Service','Gas Refill','Installation'], slots:['09:00','11:00','14:00','17:00'] },
+    { id:'p13', name:'Amit Patel',     role:'Senior HVAC Specialist',cat:'ac',      rating:4.9, jobs:1840, exp:11, dist:2.5, rate:299, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Deep Cleaning','Compressor','Multi-split'], slots:['10:00','12:30','15:30'] },
+    { id:'p14', name:'Sandeep Sharma', role:'AC Installation Pro',   cat:'ac',      rating:4.7, jobs:910,  exp:7,  dist:3.1, rate:229, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Window AC','Split AC','Ductable'], slots:['08:30','11:30','14:30'] },
+
+    // Cleaning & Home Cleaning
     { id:'p2',  name:'Priya Menon',    role:'Deep Cleaning Pro',     cat:'cleaning',rating:4.8, jobs:980,  exp:6,  dist:0.8, rate:349, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Full Home','Kitchen','Bathroom'], slots:['10:00','12:00','15:00','18:00'] },
-    { id:'p3',  name:'Suresh Kumar',   role:'Electrician',           cat:'electrician',rating:4.7, jobs:900, exp:6, dist:2.1, rate:199, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Wiring','Inverter','Fans'], slots:['09:30','13:00','16:00'] },
-    { id:'p4',  name:'Sneha Kulkarni', role:'Salon & Beauty Pro',    cat:'salon',  rating:4.9, jobs:1520, exp:7,  dist:1.6, rate:399, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Haircut','Spa','Bridal'], slots:['10:00','14:00','17:30'] },
-    { id:'p5',  name:'Manoj Kumar',    role:'Plumber',               cat:'plumber',rating:4.9, jobs:1100, exp:7,  dist:3.0, rate:199, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Leakage','Bath Fitting','Tank'], slots:['08:30','11:30','15:00'] },
-    { id:'p6',  name:'Meera Iyer',     role:'Massage Therapist',     cat:'massage',rating:4.8, jobs:540,  exp:5,  dist:2.4, rate:599, verified:true, city:'Bengaluru', avail:'Available Tomorrow', tags:['Aroma','Deep Tissue','Relaxation'], slots:['11:00','13:00','16:00','19:00'] },
-    { id:'p7',  name:'Karan Mehta',    role:'Carpenter',             cat:'carpenter',rating:4.7, jobs:820, exp:12, dist:1.9, rate:299, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Wardrobe','Doors','Modular'], slots:['09:00','12:00','15:30'] },
-    { id:'p8',  name:'Anjali Verma',   role:'Spa Specialist',        cat:'spa',    rating:4.9, jobs:430,  exp:4,  dist:2.8, rate:699, verified:true, city:'Bengaluru', avail:'Available Tomorrow', tags:['Ayurvedic','Couple Spa','Thai'], slots:['10:30','14:30','17:00'] },
-    { id:'p9',  name:'Rohit Nair',     role:'Painting Expert',       cat:'painting',rating:4.5, jobs:310, exp:10, dist:3.4, rate:999, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Interior','Texture','Waterproof'], slots:['09:00','11:00','14:00'] },
-    { id:'p10', name:'Divya Reddy',    role:'Beauty Artist',         cat:'beauty', rating:4.8, jobs:690,  exp:6,  dist:1.1, rate:499, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Bridal','Facial','Makeup'], slots:['10:00','13:00','16:30'] },
-    { id:'p11', name:'Imran Khan',     role:'Pest Control Specialist', cat:'pest', rating:4.7, jobs:380, exp:7, dist:2.2, rate:449, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Termite','Cockroach','Rodent'], slots:['09:00','12:00','15:00'] },
-    { id:'p12', name:'Neha Gupta',     role:'Home Cleaning Expert',  cat:'homeclean',rating:4.8, jobs:1120, exp:5, dist:0.9, rate:799, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Move-in','Sofa','Curtain'], slots:['09:00','11:30','14:00','17:00'] },
+    { id:'p12', name:'Neha Gupta',     role:'Home Cleaning Expert',  cat:'cleaning',rating:4.8, jobs:1120, exp:5,  dist:0.9, rate:329, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Move-in','Sofa','Curtain'], slots:['09:00','11:30','14:00','17:00'] },
+    { id:'p15', name:'Sunita Sharma',  role:'Sanitization Specialist',cat:'cleaning',rating:4.9, jobs:1450, exp:8,  dist:1.7, rate:379, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Kitchen Scrub','Bathroom Descaling','Eco-friendly'], slots:['08:00','11:00','15:00'] },
+
+    // Electrician
+    { id:'p3',  name:'Suresh Kumar',   role:'Certified Electrician', cat:'electrician',rating:4.7, jobs:900, exp:6, dist:2.1, rate:199, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Wiring','Inverter','Fans'], slots:['09:30','13:00','16:00'] },
+    { id:'p16', name:'Deepak Verma',   role:'Senior Power Technician',cat:'electrician',rating:4.9, jobs:1620, exp:10, dist:1.4, rate:249, verified:true, city:'Bengaluru', avail:'Available Today', tags:['MCB Panel','Full House Wiring','Short Circuit'], slots:['09:00','12:00','15:00'] },
+    { id:'p17', name:'Vinay Joshi',    role:'Home Electrical Expert',cat:'electrician',rating:4.8, jobs:840, exp:7, dist:2.8, rate:219, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Smart Lighting','Appliance Wiring','Generator'], slots:['10:00','13:30','17:00'] },
+
+    // Plumber
+    { id:'p5',  name:'Manoj Kumar',    role:'Master Plumber',        cat:'plumber',rating:4.9, jobs:1100, exp:7,  dist:3.0, rate:199, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Leakage','Bath Fitting','Tank'], slots:['08:30','11:30','15:00'] },
+    { id:'p18', name:'Ramesh Pujari',  role:'Sanitary & Pipe Specialist',cat:'plumber',rating:4.8, jobs:1380, exp:9, dist:1.8, rate:249, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Drainage Unclogging','Water Tank Clean','Concealed Pipe'], slots:['09:00','12:30','16:00'] },
+    { id:'p19', name:'Santosh Yadav',  role:'High-Pressure Leakage Expert',cat:'plumber',rating:4.7, jobs:760, exp:5, dist:2.2, rate:189, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Tap Repair','Flush Cistern','Geyser Piping'], slots:['10:00','14:00','17:30'] },
+
+    // Carpenter
+    { id:'p7',  name:'Karan Mehta',    role:'Furniture & Wood Artisan',cat:'carpenter',rating:4.7, jobs:820, exp:12, dist:1.9, rate:299, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Wardrobe','Doors','Modular'], slots:['09:00','12:00','15:30'] },
+    { id:'p20', name:'Ashok Vishwakarma',role:'Modular Kitchen Specialist',cat:'carpenter',rating:4.9, jobs:1540, exp:14, dist:2.3, rate:349, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Modular Kitchen','Hydraulic Fittings','Custom Woodwork'], slots:['10:00','13:00','16:30'] },
+    { id:'p21', name:'Gopal Mistri',   role:'Door & Lock Specialist',cat:'carpenter',rating:4.8, jobs:960, exp:8, dist:1.2, rate:279, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Smart Locks','Hinge Fix','Furniture Polish'], slots:['08:30','11:30','14:30'] },
+
+    // Painting
+    { id:'p9',  name:'Rohit Nair',     role:'Master Painter',        cat:'painting',rating:4.8, jobs:890, exp:10, dist:2.1, rate:499, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Interior','Texture','Waterproof'], slots:['09:00','11:00','14:00'] },
+    { id:'p22', name:'Vikram Malhotra',role:'Wall Decor & Artist',   cat:'painting',rating:4.9, jobs:1420, exp:12, dist:1.5, rate:599, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Designer Texture','Asian Paints Pro','Stencil Art'], slots:['10:00','13:00','16:00'] },
+    { id:'p23', name:'Akash Sengupta', role:'Exterior & Dampness Expert',cat:'painting',rating:4.7, jobs:780, exp:8, dist:3.2, rate:449, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Damp Proofing','Exterior Enamel','Putty Scrub'], slots:['08:30','12:00','15:00'] },
+
+    // Salon at Home
+    { id:'p4',  name:'Sneha Kulkarni', role:'Salon & Hair Artist',   cat:'salon',  rating:4.9, jobs:1520, exp:7,  dist:1.6, rate:399, verified:true, city:'Bengaluru', avail:'Available Today',  tags:['Haircut','Spa','Grooming'], slots:['10:00','14:00','17:30'] },
+    { id:'p24', name:'Arjun Kapoor',   role:'Men\'s Grooming Specialist',cat:'salon',rating:4.8, jobs:1180, exp:8, dist:1.3, rate:349, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Beard Styling','Fade Cut','Head Massage'], slots:['09:00','12:00','15:00'] },
+    { id:'p25', name:'Pooja Deshmukh', role:'Bridal Hair & Beauty',  cat:'salon',  rating:4.9, jobs:1340, exp:9, dist:2.0, rate:449, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Hair Color','Keratin','Pedicure'], slots:['11:00','14:30','18:00'] },
+
+    // Beauty
+    { id:'p10', name:'Divya Reddy',    role:'Senior Beauty Artist',  cat:'beauty', rating:4.8, jobs:690,  exp:6,  dist:1.1, rate:499, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Bridal','Facial','Makeup'], slots:['10:00','13:00','16:30'] },
+    { id:'p26', name:'Kavita Rao',     role:'Skincare & Facial Pro', cat:'beauty', rating:4.9, jobs:1260, exp:10, dist:2.4, rate:549, verified:true, city:'Bengaluru', avail:'Available Today', tags:['O3+ Facial','Threading','Detan Mask'], slots:['09:30','12:30','15:30'] },
+    { id:'p27', name:'Simran Kaur',    role:'Waxing & Clean-up Expert',cat:'beauty',rating:4.7, jobs:810, exp:5, dist:1.9, rate:429, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Rica Waxing','Manicure','Fruit Clean-up'], slots:['10:30','14:00','17:00'] },
+
+    // Massage & Spa
+    { id:'p6',  name:'Meera Iyer',     role:'Certified Massage Therapist',cat:'massage',rating:4.8, jobs:540, exp:5, dist:2.4, rate:599, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Aroma','Deep Tissue','Relaxation'], slots:['11:00','13:00','16:00','19:00'] },
+    { id:'p8',  name:'Anjali Verma',   role:'Ayurvedic Spa Specialist',cat:'spa',   rating:4.9, jobs:430,  exp:4,  dist:2.8, rate:699, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Ayurvedic','Couple Spa','Thai'], slots:['10:30','14:30','17:00'] },
+    { id:'p28', name:'Renu Thapa',     role:'Deep Tissue & Sports Physio',cat:'massage',rating:4.9, jobs:980, exp:9, dist:1.6, rate:649, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Sports Massage','Joint Pain Relief','Swedish Therapy'], slots:['09:00','12:00','15:00'] },
+
+    // Appliance Repair
+    { id:'p29', name:'Nitin Sawant',   role:'Washing Machine Specialist',cat:'appliance',rating:4.8, jobs:1420, exp:9, dist:1.4, rate:349, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Front Load','Top Load','PCB Board'], slots:['09:00','12:00','15:00'] },
+    { id:'p30', name:'Alok Sharma',    role:'Fridge & Gas Refill Pro',cat:'appliance',rating:4.7, jobs:1150, exp:8, dist:2.1, rate:349, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Double Door','Compressor','Thermostat'], slots:['10:00','13:00','16:00'] },
+    { id:'p31', name:'Vikrant Bhosale',role:'TV & Electronics Expert',cat:'appliance',rating:4.9, jobs:1680, exp:11, dist:2.7, rate:299, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Smart TV Panel','Sound Board','LED Backlight'], slots:['08:30','11:30','14:30'] },
+
+    // Pest Control
+    { id:'p11', name:'Imran Khan',     role:'Senior Pest Control Specialist',cat:'pest',rating:4.7, jobs:380, exp:7, dist:2.2, rate:449, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Termite','Cockroach','Rodent'], slots:['09:00','12:00','15:00'] },
+    { id:'p32', name:'Tarun Dutt',     role:'Herbal & Eco Pest Expert',cat:'pest', rating:4.9, jobs:1290, exp:10, dist:1.8, rate:499, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Odorless Gel','Bed Bug Spray','Ant Gel'], slots:['10:00','13:00','16:30'] },
+
+    // RO Purifier Service
+    { id:'p33', name:'Vijay Kumar',    role:'RO Purifier Master',    cat:'ro',      rating:4.8, jobs:1520, exp:8, dist:1.5, rate:299, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Membrane Change','Filter Service','TDS Test'], slots:['09:00','11:30','14:30'] },
+    { id:'p34', name:'Harish Chandra', role:'Water Quality Specialist',cat:'ro',     rating:4.9, jobs:940, exp:6, dist:2.3, rate:349, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Kent RO','Aquaguard','UV Lamp'], slots:['10:00','13:00','16:00'] },
+
+    // CCTV & Security Systems
+    { id:'p35', name:'Ravi Teja',      role:'CCTV Installation Engineer',cat:'cctv', rating:4.9, jobs:1630, exp:9, dist:1.7, rate:799, verified:true, city:'Bengaluru', avail:'Available Today', tags:['IP Cameras','DVR Config','Mobile App Access'], slots:['09:00','12:00','15:30'] },
+    { id:'p36', name:'Dharmendra Singh',role:'Security & Network Pro',cat:'cctv',    rating:4.8, jobs:1120, exp:8, dist:2.6, rate:699, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Wireless Camera','NVR Setup','Night Vision'], slots:['10:00','13:30','17:00'] },
+
+    // Laptop & IT Repair
+    { id:'p37', name:'Abhishek Roy',   role:'Doorstep Laptop Engineer',cat:'laptop', rating:4.9, jobs:1750, exp:10, dist:1.2, rate:499, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Screen Replace','SSD Boost','Motherboard'], slots:['09:30','12:30','15:30'] },
+    { id:'p38', name:'Varun Mehta',    role:'MacBook & Gaming PC Pro',cat:'laptop',  rating:4.8, jobs:1290, exp:8, dist:2.4, rate:599, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Apple Repair','OS Reset','Thermal Paste'], slots:['10:30','14:00','17:00'] },
+
+    // Home Shifting
+    { id:'p39', name:'Express Packers',role:'Relocation & Shifting Manager',cat:'shifting',rating:4.8, jobs:2100, exp:12, dist:3.0, rate:2999, verified:true, city:'Bengaluru', avail:'Available Today', tags:['Local Shifting','Bubble Wrap','Covered Truck'], slots:['08:00','11:00','14:00'] },
+    { id:'p40', name:'Southern Movers',role:'Intercity Move Specialist',cat:'shifting',rating:4.9, jobs:1840, exp:14, dist:3.5, rate:3499, verified:true, city:'Bengaluru', avail:'Available Today', tags:['GPS Truck','Transit Insurance','Furniture Assembly'], slots:['08:30','12:00','15:00'] },
   ];
 
   /* ---------- services ---------- */
@@ -2429,7 +2488,18 @@ window.DATA = (() => {
     serviceById: id => svcDefs.find(s => s.id === id),
     servicesByCat: slug => svcDefs.filter(s => s.cat === slug),
     proById: id => PROS.find(p => p.id === id),
-    prosForService: svc => PROS.filter(p => p.cat === svc.cat).slice(0, 4),
+    prosForService: svc => {
+      if (!svc) return PROS.slice(0, 4);
+      const cat = (svc.cat || '').toLowerCase();
+      let list = PROS.filter(p => p.cat.toLowerCase() === cat);
+      if (list.length === 0) {
+        if (['homeclean', 'cleaning'].includes(cat)) list = PROS.filter(p => ['homeclean', 'cleaning'].includes(p.cat.toLowerCase()));
+        else if (['salon', 'beauty'].includes(cat)) list = PROS.filter(p => ['salon', 'beauty'].includes(p.cat.toLowerCase()));
+        else if (['massage', 'spa'].includes(cat)) list = PROS.filter(p => ['massage', 'spa'].includes(p.cat.toLowerCase()));
+        else list = PROS.slice(0, 4);
+      }
+      return list;
+    },
     related: (svc, n = 3) => svcDefs.filter(s => s.cat === svc.cat && s.id !== svc.id).concat(svcDefs.filter(s => s.cat !== svc.cat)).slice(0, n),
     notIncOf: notIncOf,
     trending: () => [...svcDefs].sort((a, b) => b.bookings - a.bookings).slice(0, 8),
